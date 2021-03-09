@@ -5,3 +5,4 @@
 - hosts: mattermost
   roles:
     - ping
+    - jenkins
