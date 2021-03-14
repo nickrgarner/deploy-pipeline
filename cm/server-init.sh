@@ -10,3 +10,7 @@ set -x
 sudo add-apt-repository ppa:ansible/ansible -y
 sudo apt-get update
 sudo apt-get install ansible -y
+
+# Run ansible playbooks to install Jenkins + plugins and configure build environment
+ansible-playbook cm/jenkins-install -i inventory
+ansible-playbook cm/build-env -i inventory
