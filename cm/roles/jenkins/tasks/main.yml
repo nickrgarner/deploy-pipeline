@@ -2,45 +2,45 @@
 # Setup Jenkins on config-srv: install + pipeline-style plugins
 
 - name: Install Java 11
-yum:
-  name: "{{java.VERSION}}"
-  state: present
-become: true
+  yum:
+    name: "{{java.VERSION}}"
+    state: present
+  become: true
 
 - name: Change default Java version
-alternatives:
-  name: java
-  link: /bin/java
-  path: "{{java.ALTERNATIVES}}"
+  alternatives:
+    name: java
+    link: /bin/java
+    path: "{{java.ALTERNATIVES}}"
 
 - name: Download Jenkins yum repo
-get_url:
-  url: "{{jenkins.repo_URL}}"
-  dest: /etc/yum.repos.d/jenkins.repo
-become: true
+  get_url:
+    url: "{{jenkins.repo_URL}}"
+    dest: /etc/yum.repos.d/jenkins.repo
+  become: true
 
 - name: Import Jenkins GPG key
-rpm_key:
-  state: present
-  key: "{{jenkins.gpg_key_URL}}"
+  rpm_key:
+    state: present
+    key: "{{jenkins.gpg_key_URL}}"
 
 - name: Install Jenkins
-yum:
-  name: jenkins
-  state: present
+  yum:
+    name: jenkins
+    state: present
 
--name: Change Jenkins Java options
-lineinfile:
-  dest=/etc/sysconfig/jenkins
-  regexp=^JENKINS_JAVA_OPTIONS=
-  line=JENKINS_JAVA_OPTIONS="{{jenkins.JAVA_OPTIONS}}"
-become: true
+- name: Change Jenkins Java options
+  lineinfile:
+    dest=/etc/sysconfig/jenkins
+    regexp=^JENKINS_JAVA_OPTIONS=
+    line=JENKINS_JAVA_OPTIONS="{{jenkins.JAVA_OPTIONS}}"
+  become: true
 
 - name: Start Jenkins service and enable on boot
-service:
-  name: jenkins
-  state: started
-  enabled: yes
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
 
 # TODO: Set admin:admin for admin user and password, install pipeline-style plugins,
 # set port to 9000
