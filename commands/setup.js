@@ -29,27 +29,19 @@ async function run(privateKey) {
   console.log(chalk.greenBright("Installing config-srv server!"));
 
   console.log(chalk.blueBright("Downloading focal image..."));
-  let result = child.spawnSync(
-    `bakerx`,
-    `pull focal cloud-images.ubuntu.com`.split(" "),
-    {
-      shell: true,
-      stdio: "inherit",
-    }
-  );
+  let result = child.spawnSync(`bakerx`, `pull focal cloud-images.ubuntu.com`.split(" "), {
+    shell: true,
+    stdio: "inherit",
+  });
   if (result.error) {
     printError(result);
   }
 
   console.log(chalk.blueBright("Provisioning config-srv server..."));
-  result = child.spawnSync(
-    `bakerx`,
-    `run config-srv focal --ip 192.168.33.20 --memory=2048 --sync`.split(" "),
-    {
-      shell: true,
-      stdio: "inherit",
-    }
-  );
+  result = child.spawnSync(`bakerx`, `run config-srv focal --ip 192.168.33.20 --memory=2048 --sync`.split(" "), {
+    shell: true,
+    stdio: "inherit",
+  });
   if (result.error) {
     printError(result);
   }
