@@ -7,11 +7,11 @@ set -e
 set -x
 
 # Script used to initialize your ansible server after provisioning.
-# sudo add-apt-repository ppa:ansible/ansible -y
+sudo add-apt-repository ppa:ansible/ansible -y
+# sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
 sudo apt-get update
-sudo apt install python3-pip -y
-sudo pip3 install ansible
-# sudo apt-get install ansible -y
+sudo apt-get install ansible -y
+sudo apt-get install -y rpm
 
 # Run ansible playbooks to install Jenkins + plugins and configure build environment
 ansible-playbook /bakerx/cm/jenkins-install.yml

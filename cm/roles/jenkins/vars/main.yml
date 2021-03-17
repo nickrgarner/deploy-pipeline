@@ -4,6 +4,6 @@ java:
   ALTERNATIVES: "/usr/lib/jvm/java-11-openjdk-amd64/bin/java"
 
 jenkins:
-  repo_URL: "http://pkg.jenkins.io/redhat"
-  gpg_key_URL: "https://jenkins-ci.org/redhat/jenkins-ci.org.key"
+  repo_URL: "https://pkg.jenkins.io/debian"
+  gpg_key_URL: "https://pkg.jenkins.io/debian/jenkins.io.key"
   JAVA_OPTIONS: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"
