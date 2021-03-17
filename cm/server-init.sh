@@ -17,4 +17,5 @@ sudo apt-get install -y firewalld
 
 # Run ansible playbooks to install Jenkins + plugins and configure build environment
 ansible-playbook /bakerx/cm/jenkins-install.yml
+ansible-galaxy collection install community.mongodb      #Install galazy roles for build-env. Pretty sure we can use them here, just not in the server config/installation.
 ansible-playbook /bakerx/cm/build-env.yml

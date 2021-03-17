@@ -108,5 +108,10 @@
     name: jenkins
     state: restarted
   become: true
+
+#- name: Install plugins
+ # jenkins_plugin:
+ #   name: build-pipeline-plugin
+  # become: true
 # TODO: Set admin:admin for admin user and password, install pipeline-style plugins,
 # set port to 9000

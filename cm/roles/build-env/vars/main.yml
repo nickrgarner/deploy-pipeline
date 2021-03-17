@@ -1,0 +1,8 @@
+---
+
+mongo:
+  APP_PORT: 3002
+  MONGO_PORT: 27017
+  MONGO_USER: "SpicyPanda"
+  MONGO_PASSWORD: "joenickjosh0"
+  MONGO_IP: localhost

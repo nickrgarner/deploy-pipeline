@@ -2,11 +2,36 @@
 # Install dependencies for checkbox.io build jobs
 
 - name: Install nodejs
-apt:
-  pkg: nodejs
-  state: present
+  apt:
+    pkg: nodejs
+    state: present
+  become: yes
 
 - name: Install mongodb
-apt:
-  pkg: mongodb-org
-  state: latest
+  apt:
+    pkg: mongodb
+    state: latest
+  become: yes
+
+- name: Install Python for Mongo Collection Dependencies
+  apt:
+    pkg: python3-pip
+    state: latest
+  become: yes
+
+- name: Installing pymongo
+  pip:
+    name: pymongo
+    state: latest
+  become: yes
+
+# Create Mongo User + Password
+
+- name: Create Mongo User
+  community.mongodb.mongodb_user:
+    database: pipeline
+    name: "{{mongo.MONGO_USER}}"
+    password: "{{mongo.MONGO_PASSWORD}}"
+    roles: userAdmin,readWrite
+    state: present
+  become: yes
