@@ -13,6 +13,19 @@
     link: /bin/java
     path: "{{java.ALTERNATIVES}}"
 
+# - name: Add Jenkins apt key
+#   apt_key:
+#     url: "{{jenkins.gpg_key_URL}}"
+#     state: present
+#   become: true
+
+# - name: Add Jenkins to apt source list
+#   lineinfile:
+#     path: etc/apt/sources.list.d/jenkins.list
+#     line: deb http://pkg.jenkins.io/debian-stable binary/
+#     state: present
+#     create: yes
+
 - name: Ensures /etc/yum.repos.d dir exists
   file: path=/etc/yum.repos.d state=directory
   become: true
@@ -41,9 +54,11 @@
   become: true
 
 - name: Change Jenkins Java options
-  lineinfile: dest=/etc/sysconfig/jenkins
-    regexp=^JENKINS_JAVA_OPTIONS=
-    line=JENKINS_JAVA_OPTIONS="{{jenkins.JAVA_OPTIONS}}"
+  lineinfile:
+    dest: /etc/sysconfig/jenkins
+    regexp: ^JENKINS_JAVA_OPTIONS=
+    line: JENKINS_JAVA_OPTIONS="{{jenkins.JAVA_OPTIONS}}"
+    create: yes
   become: true
 
 - name: Start Jenkins service and enable on boot
@@ -51,5 +66,14 @@
     name: jenkins
     state: started
     enabled: yes
+
+- name: Open Port 9000 for Jenkins
+  firewalld:
+    zone: public
+    port: 9000/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  become: true
 # TODO: Set admin:admin for admin user and password, install pipeline-style plugins,
 # set port to 9000
