@@ -82,5 +82,31 @@
     state: enabled
     immediate: true
   become: true
+
+- name: Add init.groovy.d directory
+  file:
+    path: /var/lib/jenkins/init.groovy.d
+    state: directory
+  become: true
+
+- name: Copy basic-security.groovy file to Jenkins
+  template:
+    src: /bakerx/basic-security.groovy
+    dest: /var/lib/jenkins/init.groovy.d
+  become: true
+
+- name: Add Jenkins to sudoers file
+  lineinfile:
+    dest: /etc/sudoers.d/jenkins
+    state: present
+    create: yes
+    line: "jenkins ALL=(ALL) NOPASSWD: ALL"
+  become: true
+
+- name: Restart Jenkins
+  service:
+    name: jenkins
+    state: restarted
+  become: true
 # TODO: Set admin:admin for admin user and password, install pipeline-style plugins,
 # set port to 9000
