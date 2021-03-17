@@ -1,0 +1,6 @@
+---
+# Install Jenkins on config-srv and install plugins for pipeline-style jobs
+
+- hosts: localhost
+  roles:
+    - jenkins

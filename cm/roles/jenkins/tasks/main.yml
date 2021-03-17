@@ -1,0 +1,112 @@
+---
+# Setup Jenkins on config-srv: install + pipeline-style plugins
+
+- name: Install Java 11
+  yum:
+    name: "{{java.VERSION}}"
+    state: present
+  become: true
+
+- name: Change default Java version
+  alternatives:
+    name: java
+    link: /bin/java
+    path: "{{java.ALTERNATIVES}}"
+
+# - name: Add Jenkins apt key
+#   apt_key:
+#     url: "{{jenkins.gpg_key_URL}}"
+#     state: present
+#   become: true
+
+# - name: Add Jenkins to apt source list
+#   lineinfile:
+#     path: etc/apt/sources.list.d/jenkins.list
+#     line: deb http://pkg.jenkins.io/debian-stable binary/
+#     state: present
+#     create: yes
+
+- name: Ensures /etc/yum.repos.d dir exists
+  file: path=/etc/yum.repos.d state=directory
+  become: true
+
+- name: Add Jenkins yum repo
+  yum_repository:
+    name: jenkins
+    state: present
+    gpgkey: "{{jenkins.gpg_key_URL}}"
+    baseurl: "{{jenkins.repo_URL}}"
+    gpgcheck: true
+    description: Official Jenkins Yum Repo
+    enabled: yes
+  become: true
+
+- name: Import Jenkins Key
+  rpm_key:
+    state: present
+    key: "{{jenkins.gpg_key_URL}}"
+
+- name: Install Jenkins
+  yum:
+    name: jenkins
+    update_cache: yes
+    state: present
+  become: true
+
+- name: Change Jenkins Java options
+  lineinfile:
+    dest: /etc/sysconfig/jenkins
+    regexp: ^JENKINS_JAVA_OPTIONS=
+    line: JENKINS_JAVA_OPTIONS="{{jenkins.JAVA_OPTIONS}}"
+    create: yes
+  become: true
+
+- name: Set Jenkins port to 9000
+  lineinfile:
+    dest: /etc/default/jenkins
+    regexp: ^HTTP_PORT=
+    line: "HTTP_PORT={{jenkins.port}}"
+  become: true
+
+- name: Start Jenkins service and enable on boot
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
+
+- name: Open Port 9000 for Jenkins
+  firewalld:
+    zone: public
+    port: 9000/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  become: true
+
+- name: Add init.groovy.d directory
+  file:
+    path: /var/lib/jenkins/init.groovy.d
+    state: directory
+  become: true
+
+- name: Copy basic-security.groovy file to Jenkins
+  template:
+    src: /bakerx/basic-security.groovy
+    dest: /var/lib/jenkins/init.groovy.d
+  become: true
+
+- name: Add Jenkins to sudoers file
+  lineinfile:
+    dest: /etc/sudoers.d/jenkins
+    state: present
+    create: yes
+    line: "jenkins ALL=(ALL) NOPASSWD: ALL"
+  become: true
+
+- name: Restart Jenkins
+  service:
+    name: jenkins
+    state: restarted
+  become: true
+# TODO: Set admin:admin for admin user and password, install pipeline-style plugins,
+# set port to 9000

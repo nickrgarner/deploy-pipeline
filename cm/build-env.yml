@@ -1,0 +1,6 @@
+---
+# Setup dependencies for checkbox.io build jobs
+
+- hosts: localhost
+  roles:
+    - build-env

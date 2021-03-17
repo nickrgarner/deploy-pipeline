@@ -1,0 +1,10 @@
+---
+java:
+  VERSION: openjdk-11-jdk-headless
+  ALTERNATIVES: "/usr/lib/jvm/java-11-openjdk-amd64/bin/java"
+
+jenkins:
+  repo_URL: "https://pkg.jenkins.io/debian"
+  gpg_key_URL: "https://pkg.jenkins.io/debian/jenkins.io.key"
+  JAVA_OPTIONS: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"
+  port: 9000

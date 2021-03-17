@@ -1,0 +1,12 @@
+---
+# Install dependencies for checkbox.io build jobs
+
+- name: Install nodejs
+apt:
+  pkg: nodejs
+  state: present
+
+- name: Install mongodb
+apt:
+  pkg: mongodb-org
+  state: latest
