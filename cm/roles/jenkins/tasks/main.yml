@@ -61,6 +61,13 @@
     create: yes
   become: true
 
+- name: Set Jenkins port to 9000
+  lineinfile:
+    dest: /etc/default/jenkins
+    regexp: ^HTTP_PORT=
+    line: "HTTP_PORT={{jenkins.port}}"
+  become: true
+
 - name: Start Jenkins service and enable on boot
   service:
     name: jenkins
