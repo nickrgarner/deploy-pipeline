@@ -8,14 +8,15 @@ set -x
 
 # Script used to initialize your ansible server after provisioning.
 sudo add-apt-repository ppa:ansible/ansible -y
-wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
-sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
 sudo apt-get update
 sudo apt-get install ansible -y
+
+# Install dependencies for Jenkins configuration
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
 sudo apt-get install -y rpm
 sudo apt-get install -y firewalld
 
 # Run ansible playbooks to install Jenkins + plugins and configure build environment
 ansible-playbook /bakerx/cm/jenkins-install.yml
-ansible-galaxy collection install community.mongodb      #Install galazy roles for build-env. Pretty sure we can use them here, just not in the server config/installation.
 ansible-playbook /bakerx/cm/build-env.yml
