@@ -19,6 +19,11 @@
     state: latest
   become: true
 
+- name: Install jenkins-job-builder
+  pip:
+    name: jenkins-job-builder
+    state: present
+
 - name: Installing pymongo
   pip:
     name: pymongo
