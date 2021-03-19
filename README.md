@@ -4,6 +4,7 @@
 Usage:
 Configure Jenkins and build environment:
 ```shell
+npm install
 npm link
 pipeline setup
 ```
