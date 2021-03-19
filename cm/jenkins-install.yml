@@ -1,6 +1,6 @@
 ---
-# Install Jenkins on config-srv and install plugins for pipeline-style jobs
+# Install Java 11 and Jenkins on config-srv
 
 - hosts: localhost
   roles:
-    - jenkins
+    - jenkins_install
