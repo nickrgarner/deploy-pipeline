@@ -1,0 +1,66 @@
+---
+# Setup Jenkins on config-srv: install + pipeline-style plugins
+
+- name: Download Jenkins apt key
+  get_url:
+    url: https://pkg.jenkins.io/debian/jenkins.io.key
+    dest: /tmp/jenkins-key
+
+- name: Add Jenkins apt key
+  shell: apt-key add /tmp/jenkins-key
+  become: true
+
+- name: Add Jenkins to apt sources
+  shell: sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+  become: true
+
+- name: Install rpm
+  apt:
+    name: rpm
+    state: present
+  become: true
+
+- name: Install firewalld
+  apt:
+    name: firewalld
+    state: present
+  become: true
+
+- name: Install Java 11
+  yum:
+    name: "{{java.VERSION}}"
+    state: present
+  become: true
+
+- name: Change default Java version
+  alternatives:
+    name: java
+    link: /bin/java
+    path: "{{java.ALTERNATIVES}}"
+
+- name: Ensures /etc/yum.repos.d dir exists
+  file: path=/etc/yum.repos.d state=directory
+  become: true
+
+- name: Add Jenkins yum repo
+  yum_repository:
+    name: jenkins
+    state: present
+    gpgkey: "{{jenkins.gpg_key_URL}}"
+    baseurl: "{{jenkins.repo_URL}}"
+    gpgcheck: true
+    description: Official Jenkins Yum Repo
+    enabled: yes
+  become: true
+
+- name: Import Jenkins Key
+  rpm_key:
+    state: present
+    key: "{{jenkins.gpg_key_URL}}"
+
+- name: Install Jenkins
+  yum:
+    name: jenkins
+    update_cache: yes
+    state: present
+  become: true
