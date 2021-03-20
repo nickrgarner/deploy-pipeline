@@ -1,5 +1,10 @@
 ---
 # Setup Jenkins on config-srv: install + pipeline-style plugins
+- name: Copy ansible vault-pass to home directory
+  template:
+    src: /bakerx/.vault-pass
+    dest: /home/.vault-pass
+  become: true
 
 - name: Download Jenkins apt key
   get_url:

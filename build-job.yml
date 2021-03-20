@@ -1,0 +1,26 @@
+- job:
+  name: checkbox-build
+  project-type: pipeline
+  defaults: global
+  description: "Builds checkbox.io program and runs npm test."
+  disabled: false
+  display-name: "checkbox.io Pipeline Build"
+  concurrent: false
+  retry-count: 3
+  scm:
+    - git:
+      url: https://github.com/chrisparnin/checkbox.io
+      branches:
+        - master
+  wrappers:
+    - mongo-db:
+      name:
+      data-directory:
+      port:
+      startup-params:
+      start-timeout: 5000
+  builders:
+    - shell: "npm install"
+    - nodejs:
+      script: server-side/site/server.js
+    - shell: "npm test"

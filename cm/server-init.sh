@@ -13,5 +13,5 @@ sudo apt-get install ansible -y
 
 # Run ansible playbooks to install Jenkins + plugins and configure build environment
 ansible-playbook /bakerx/cm/jenkins-install.yml
-ansible-playbook /bakerx/cm/jenkins-config.yml
-ansible-playbook /bakerx/cm/build-env.yml
+ansible-playbook --vault-pass "/home/.vault-pass" /bakerx/cm/jenkins-config.yml
+ansible-playbook --vault-pass "/home/.vault-pass" /bakerx/cm/build-env.yml

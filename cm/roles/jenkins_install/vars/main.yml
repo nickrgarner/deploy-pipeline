@@ -8,5 +8,3 @@ jenkins:
   gpg_key_URL: "https://pkg.jenkins.io/debian/jenkins.io.key"
   JAVA_OPTIONS: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"
   port: 9000
-  username: "admin"
-  password: "admin"
