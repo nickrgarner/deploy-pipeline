@@ -3,9 +3,9 @@
 
 - name: Change Jenkins Java options
   lineinfile:
-    dest: /etc/sysconfig/jenkins
-    regexp: ^JENKINS_JAVA_OPTIONS=
-    line: JENKINS_JAVA_OPTIONS="{{jenkins.JAVA_OPTIONS}}"
+    dest: /etc/default/jenkins
+    regexp: ^JAVA_ARGS=
+    line: JAVA_ARGS="{{jenkins.JAVA_OPTIONS}}"
     create: yes
   become: true
 
@@ -66,9 +66,34 @@
   retries: 12
   delay: 5
 
-- name: Install plugins
+- name: Delete basic-security.groovy script
+  file:
+    path: /var/lib/jenkins/init.groovy.d/basic-security.groovy
+    state: absent
+  become: true
+
+- name: Install pipeline plugin
   jenkins_plugin:
     name: build-pipeline-plugin
+    url: "http://192.168.33.20:9000"
+    url_username: "{{jenkins.username}}"
+    url_password: "{{jenkins.password}}"
+    timeout: 60
+  become: true
+
+- name: Install dsl plugin
+  jenkins_plugin:
+    name: job-dsl-plugin
+    url: "http://192.168.33.20:9000"
+    url_username: "{{jenkins.username}}"
+    url_password: "{{jenkins.password}}"
+    timeout: 60
+  become: true
+
+- name: Install workflow aggregator plugin
+  jenkins_plugin:
+    name: workflow-aggregator
+    with_dependencies: yes
     url: "http://192.168.33.20:9000"
     url_username: "{{jenkins.username}}"
     url_password: "{{jenkins.password}}"

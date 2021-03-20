@@ -13,4 +13,5 @@ instance.setSecurityRealm(hudsonRealm)
 
 def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
 instance.setAuthorizationStrategy(strategy)
+instance.setInstallState(InstallState.INITIAL_SETUP_COMPLETED)
 instance.save()
