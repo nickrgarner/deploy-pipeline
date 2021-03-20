@@ -55,11 +55,28 @@
     state: latest
   become: true
 
+- name: Start mongodb service
+  service:
+    name: mongodb
+    state: started
+    enabled: yes
+
+- name: Open Port 27017 for Mongodb
+  firewalld:
+    zone: public
+    port: 27017/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  become: true
+
 - name: Create mongodb user
+  no_log: true
   mongodb_user:
     database: admin
     name: "{{mongo.MONGO_USER}}"
     password: "{{mongo.MONGO_PASSWORD}}"
+    login_port: "{{mongo.MONGO_PORT}}"
     roles: readWrite
     state: present
   become: true
