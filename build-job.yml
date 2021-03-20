@@ -9,18 +9,20 @@
     concurrent: false
     retry-count: 3
     dsl: |
-      step("Cloning checkbox.io...") {
-        git "https://github.com/chrisparnin/checkbox.io"
-      }
-      step("Installing dependencies...") {
-        sh "cd server-side/site/ && npm install"
-      }
-      step("Starting checkbox.io server...") {
-        sh "pm2 start server.js"
-      }
-      step("Running tests...") {
-        sh "npm test"
-      }
-      step("Stopping server...") {
-        sh "pm2 stop server.js"
+      node {
+        stage("Cloning checkbox.io...") {
+          git "https://github.com/chrisparnin/checkbox.io"
+        }
+        stage("Installing dependencies...") {
+          sh "cd server-side/site/ && npm install"
+        }
+        stage("Starting checkbox.io server...") {
+          sh "pm2 start server.js"
+        }
+        stage("Running tests...") {
+          sh "npm test"
+        }
+        stage("Stopping server...") {
+          sh "pm2 stop server.js"
+        }
       }
