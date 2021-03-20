@@ -3,9 +3,9 @@
 
 - name: Change Jenkins Java options
   lineinfile:
-    dest: /etc/sysconfig/jenkins
-    regexp: ^JENKINS_JAVA_OPTIONS=
-    line: JENKINS_JAVA_OPTIONS="{{jenkins.JAVA_OPTIONS}}"
+    dest: /etc/default/jenkins
+    regexp: ^JAVA_ARGS=
+    line: JAVA_ARGS="{{jenkins.JAVA_OPTIONS}}"
     create: yes
   become: true
 
