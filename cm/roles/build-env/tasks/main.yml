@@ -32,9 +32,9 @@
 
 - name: Create mongodb user
   mongodb_user:
-    database: pipeline
+    database: admin
     name: "{{mongo.MONGO_USER}}"
     password: "{{mongo.MONGO_PASSWORD}}"
-    roles: userAdmin, readWrite
+    roles: readWrite
     state: present
   become: true
