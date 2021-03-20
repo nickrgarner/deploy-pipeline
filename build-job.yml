@@ -11,18 +11,28 @@
     dsl: |
       node {
         stage("Cloning checkbox.io...") {
-          git "https://github.com/chrisparnin/checkbox.io"
+          dir('/tmp/jenkins') {
+            sh 'git clone https://github.com/chrisparnin/checkbox.io.git'
+          }
         }
         stage("Installing dependencies...") {
-          sh "cd server-side/site/ && npm install"
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh 'npm install'
+          }
         }
         stage("Starting checkbox.io server...") {
-          sh "pm2 start server.js"
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh "pm2 start server.js"
+          }
         }
         stage("Running tests...") {
-          sh "npm test"
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh "npm test"
+          }
         }
         stage("Stopping server...") {
-          sh "pm2 stop server.js"
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh "pm2 stop server.js"
+          }
         }
       }
