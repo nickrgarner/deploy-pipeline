@@ -26,7 +26,7 @@ async function run(job = "checkbox-build") {
 
   console.log(chalk.blueBright("Updating jenkins jobs..."));
   let result = sshSync(
-    `/home/vagrant/.local/bin/jenkins-jobs --conf /etc/jenkins_jobs/jenkins_jobs.ini update /bakerx/build-job.yml`,
+    `/home/vagrant/.local/bin/jenkins-jobs --conf /etc/jenkins_jobs/jenkins_jobs.ini --user ${process.env.JENKINS_USER} --password ${process.env.JENKINS_PASSWORD} update /bakerx/build-job.yml`,
     "vagrant@192.168.33.20"
   );
   if (result.error) {
