@@ -12,6 +12,11 @@
       node {
         stage("Cloning checkbox.io...") {
           dir('/tmp/jenkins') {
+            sh 'rm -rf checkbox.io'
+          }
+        }
+        stage("Cloning checkbox.io...") {
+          dir('/tmp/jenkins') {
             sh 'git clone https://github.com/chrisparnin/checkbox.io.git'
           }
         }

@@ -6,6 +6,7 @@ const os = require("os");
 const jenkins = require("jenkins")({
   baseUrl: `http://${process.env.JENKINS_USER}:${process.env.JENKINS_PASSWORD}@192.168.33.20:9000`,
   crumbIssuer: true,
+  promisify: true,
 });
 
 const scpSync = require("../lib/scp");
@@ -21,6 +22,32 @@ exports.handler = async (argv) => {
   })();
 };
 
+async function getBuildStatus(job, id) {
+  return new Promise(async function (resolve, reject) {
+    const result = await jenkins.build.get(job, id);
+    resolve(result);
+  });
+}
+
+async function waitOnQueue(id) {
+  return new Promise(function (resolve, reject) {
+    jenkins.queue.item(id, function (err, item) {
+      if (err) {
+        throw err;
+      }
+      if (item.executable) {
+        resolve(item.executable.number);
+      } else if (item.cancelled) {
+        reject("canceled");
+      } else {
+        setTimeout(async function () {
+          resolve(await waitOnQueue(id));
+        }, 5000);
+      }
+    });
+  });
+}
+
 async function run(job = "checkbox-build") {
   console.log(chalk.greenBright("Triggering jenkins build job"));
 
@@ -34,12 +61,28 @@ async function run(job = "checkbox-build") {
   }
 
   console.log(chalk.blueBright(`Triggering job [${job}]...`));
-  result = await jenkins.job.build(job, (err, data) => {
-    if (err) {
-      throw err;
-    }
+  const queueId = await jenkins.job.build(job);
+  console.log(chalk.blueBright(`Queue item number: ${queueId}`));
 
-    console.log(chalk.blueBright(`Queue Item Number: ${data}`));
+  console.log(chalk.blueBright(`Waiting for job to start...`));
+  const buildId = await waitOnQueue(queueId);
+
+  console.log(chalk.blueBright(`Fetching Build Log:`));
+  const log = await jenkins.build.logStream(job, buildId);
+
+  log.on("data", function (text) {
+    process.stdout.write(text);
+  });
+
+  log.on("error", function (err) {
+    printError(err);
+  });
+
+  log.on("end", async function () {
+    const build = await getBuildStatus(job, buildId);
+    console.log(
+      chalk.blueBright(`Build finished with result: ${build.result}`)
+    );
   });
 }
 
