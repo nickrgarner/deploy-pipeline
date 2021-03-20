@@ -66,6 +66,12 @@
   retries: 12
   delay: 5
 
+- name: Delete basic-security.groovy script
+  file:
+    path: /var/lib/jenkins/init.groovy.d/basic-security.groovy
+    state: absent
+  become: true
+
 - name: Install plugins
   jenkins_plugin:
     name: build-pipeline-plugin
