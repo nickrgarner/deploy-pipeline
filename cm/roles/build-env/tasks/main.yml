@@ -32,6 +32,12 @@
     state: present
   become: true
 
+- name: Install npm
+  apt:
+    pkg: npm
+    state: present
+  become: true
+
 - name: Install mongodb
   apt:
     pkg: mongodb
@@ -48,6 +54,13 @@
   pip:
     name: jenkins-job-builder
     state: present
+
+- name: Install pm2 to run checkbox server
+  npm:
+    name: pm2
+    global: yes
+    state: present
+  become: true
 
 - name: Installing pymongo
   pip:
