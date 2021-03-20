@@ -7,20 +7,19 @@
   display-name: "checkbox.io Pipeline Build"
   concurrent: false
   retry-count: 3
-  scm:
-    - git:
-      url: https://github.com/chrisparnin/checkbox.io
-      branches:
-        - master
-  wrappers:
-    - mongo-db:
-      name:
-      data-directory:
-      port:
-      startup-params:
-      start-timeout: 5000
-  builders:
-    - shell: "npm install"
-    - nodejs:
-      script: server-side/site/server.js
-    - shell: "npm test"
+  dsl: |
+    stage("Cloning checkbox.io...") {
+      git "https://github.com/chrisparnin/checkbox.io"
+    }
+    stage("Installing dependencies...") {
+      sh "cd server-side/site/ && npm install"
+    }
+    stage("Starting checkbox.io server...") {
+      sh "pm2 start server.js"
+    }
+    stage("Running tests...") {
+      sh "npm test"
+    }
+    stage("Stopping server...") {
+      sh "pm2 stop server.js"
+    }
