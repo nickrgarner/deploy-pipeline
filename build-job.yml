@@ -10,17 +10,17 @@
     retry-count: 3
     dsl: |
       step("Cloning checkbox.io...") {
-        shell(git "https://github.com/chrisparnin/checkbox.io")
+        git "https://github.com/chrisparnin/checkbox.io"
       }
       step("Installing dependencies...") {
-        shell(sh "cd server-side/site/ && npm install")
+        sh "cd server-side/site/ && npm install"
       }
       step("Starting checkbox.io server...") {
-        shell(sh "pm2 start server.js")
+        sh "pm2 start server.js"
       }
       step("Running tests...") {
-        shell(sh "npm test")
+        sh "npm test"
       }
       step("Stopping server...") {
-        shell(sh "pm2 stop server.js")
+        sh "pm2 stop server.js"
       }
