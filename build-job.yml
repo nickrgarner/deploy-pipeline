@@ -1,25 +1,26 @@
+---
 - job:
-  name: checkbox-build
-  project-type: pipeline
-  defaults: global
-  description: "Builds checkbox.io program and runs npm test."
-  disabled: false
-  display-name: "checkbox.io Pipeline Build"
-  concurrent: false
-  retry-count: 3
-  dsl: |
-    stage("Cloning checkbox.io...") {
-      git "https://github.com/chrisparnin/checkbox.io"
-    }
-    stage("Installing dependencies...") {
-      sh "cd server-side/site/ && npm install"
-    }
-    stage("Starting checkbox.io server...") {
-      sh "pm2 start server.js"
-    }
-    stage("Running tests...") {
-      sh "npm test"
-    }
-    stage("Stopping server...") {
-      sh "pm2 stop server.js"
-    }
+    name: checkbox-build
+    project-type: pipeline
+    defaults: global
+    description: "Builds checkbox.io program and runs npm test."
+    disabled: false
+    display-name: "checkbox.io Pipeline Build"
+    concurrent: false
+    retry-count: 3
+    dsl: |
+      step("Cloning checkbox.io...") {
+        shell(git "https://github.com/chrisparnin/checkbox.io")
+      }
+      step("Installing dependencies...") {
+        shell(sh "cd server-side/site/ && npm install")
+      }
+      step("Starting checkbox.io server...") {
+        shell(sh "pm2 start server.js")
+      }
+      step("Running tests...") {
+        shell(sh "npm test")
+      }
+      step("Stopping server...") {
+        shell(sh "pm2 stop server.js")
+      }

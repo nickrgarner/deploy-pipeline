@@ -72,9 +72,18 @@
     state: absent
   become: true
 
-- name: Install plugins
+- name: Install pipeline plugin
   jenkins_plugin:
     name: build-pipeline-plugin
+    url: "http://192.168.33.20:9000"
+    url_username: "{{jenkins.username}}"
+    url_password: "{{jenkins.password}}"
+    timeout: 60
+  become: true
+
+- name: Install dsl plugin
+  jenkins_plugin:
+    name: job-dsl-plugin
     url: "http://192.168.33.20:9000"
     url_username: "{{jenkins.username}}"
     url_password: "{{jenkins.password}}"
