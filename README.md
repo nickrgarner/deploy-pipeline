@@ -20,10 +20,10 @@ npm link
 pipeline setup
 ```
 
-Run `checkbox.io` build job:
+Run `checkbox-build` build job:
 
 ```shell
-pipeline build checkbox.io -u admin -p admin
+pipeline build checkbox-build -u admin -p admin
 ```
 
 ### Discussion
