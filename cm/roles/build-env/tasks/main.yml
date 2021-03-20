@@ -1,6 +1,16 @@
 ---
 # Install dependencies for checkbox.io build jobs
 
+- name: Ensures /etc/jenkins_jobs dir exists
+  file: path=/etc/jenkins_jobs state=directory
+  become: true
+
+- name: Copy jenkins_job.ini to correct location
+  template:
+    src: /bakerx/jenkins_jobs.ini
+    dest: /etc/jenkins_jobs/jenkins_jobs.ini
+  become: true
+
 - name: Install nodejs
   apt:
     pkg: nodejs
