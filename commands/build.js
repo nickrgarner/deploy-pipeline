@@ -1,22 +1,36 @@
-require("dotenv").config();
 const child = require("child_process");
 const chalk = require("chalk");
 const path = require("path");
 const os = require("os");
-const jenkins = require("jenkins")({
-  baseUrl: `http://${process.env.JENKINS_USER}:${process.env.JENKINS_PASSWORD}@192.168.33.20:9000`,
-  crumbIssuer: true,
-  promisify: true,
-});
-
 const scpSync = require("../lib/scp");
 const sshSync = require("../lib/ssh");
 
-exports.command = "build";
-exports.desc = "Trigger a build job on Jenkins";
+let jenkins;
 
+exports.command = "build [job]";
+exports.desc = "Trigger a build job on Jenkins";
+exports.builder = (yargs) => {
+  yargs.positional("job", {
+    describe: "Name of the build job",
+  });
+  yargs.option("user", {
+    alias: "u",
+    type: "string",
+    description: "Jenkins User Name",
+  });
+  yargs.option("password", {
+    alias: "p",
+    type: "string",
+    description: "Jenkins Password",
+  });
+};
 exports.handler = async (argv) => {
-  const { job } = argv;
+  const { job, user, password } = argv;
+  jenkins = require("jenkins")({
+    baseUrl: `http://${user}:${password}@192.168.33.20:9000`,
+    crumbIssuer: true,
+    promisify: true,
+  });
   (async () => {
     await run(job);
   })();
@@ -48,7 +62,7 @@ async function waitOnQueue(id) {
   });
 }
 
-async function run(job = "checkbox-build") {
+async function run(job) {
   console.log(chalk.greenBright("Triggering jenkins build job"));
 
   console.log(chalk.blueBright("Updating jenkins jobs..."));
