@@ -10,8 +10,6 @@ Configure Jenkins and build environment:
 # Create .vault-pass file
 echo "<VAULT PASSWORD>\n" >> .vault-pass
 
-
-
 # Install
 npm install
 npm link
@@ -23,7 +21,7 @@ pipeline setup
 Run `checkbox-build` build job:
 
 ```shell
-pipeline build checkbox-build -u admin -p admin
+pipeline build checkbox-build -u <JENKINS USERNAME> -p <JENKINS PASSWORD>
 ```
 
 ### Discussion
