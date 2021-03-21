@@ -32,7 +32,7 @@ exports.handler = async (argv) => {
     promisify: true,
   });
   (async () => {
-    await run(job);
+    await run(job, user, password);
   })();
 };
 
@@ -62,12 +62,12 @@ async function waitOnQueue(id) {
   });
 }
 
-async function run(job) {
+async function run(job, user, password) {
   console.log(chalk.greenBright("Triggering jenkins build job"));
 
   console.log(chalk.blueBright("Updating jenkins jobs..."));
   let result = sshSync(
-    `/home/vagrant/.local/bin/jenkins-jobs --conf /etc/jenkins_jobs/jenkins_jobs.ini --user ${process.env.JENKINS_USER} --password ${process.env.JENKINS_PASSWORD} update /bakerx/build-job.yml`,
+    `/home/vagrant/.local/bin/jenkins-jobs --conf /etc/jenkins_jobs/jenkins_jobs.ini --user ${user} --password ${password} update /bakerx/build-job.yml`,
     "vagrant@192.168.33.20"
   );
   if (result.error) {
