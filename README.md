@@ -18,7 +18,7 @@ npm link
 pipeline setup
 ```
 
-Run `checkbox.io` build job:
+Run `checkbox-build` build job:
 
 ```shell
 pipeline build checkbox-build -u <JENKINS USERNAME> -p <JENKINS PASSWORD>
