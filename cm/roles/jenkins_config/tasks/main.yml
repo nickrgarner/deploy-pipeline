@@ -100,6 +100,21 @@
     timeout: 60
   become: true
 
+- name: Create environment variables
+  lineinfile:
+    dest: /etc/environment
+    regexp: "^{{item.key}}="
+    line: "{{item.key}}={{item.value}}"
+    create: yes
+  with_items:
+    - { key: "DB_ENGINE", value: "{{mongo.DB_ENGINE}}" }
+    - { key: "APP_PORT", value: "{{mongo.APP_PORT}}" }
+    - { key: "MONGO_PORT", value: "{{mongo.MONGO_PORT}}" }
+    - { key: "MONGO_USER", value: "{{mongo.MONGO_USER}}" }
+    - { key: "MONGO_PASSWORD", value: "{{mongo.MONGO_PASSWORD}}" }
+    - { key: "MONGO_IP", value: "{{mongo.MONGO_IP}}" }
+  become: true
+
 - name: Restart Jenkins
   service:
     name: jenkins
