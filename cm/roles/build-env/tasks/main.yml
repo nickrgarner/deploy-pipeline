@@ -3,7 +3,7 @@
 
 - name: Create environment variables
   lineinfile:
-    dest: /etc/environment
+    dest: /etc/default/jenkins
     regexp: "^{{item.key}}="
     line: "{{item.key}}={{item.value}}"
     create: yes
