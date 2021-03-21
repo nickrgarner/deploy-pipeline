@@ -2,7 +2,7 @@
 
 ## CSC 519 - DevOps, Spring 2021
 
-### Usage
+## Usage
 
 Configure Jenkins and build environment:
 
@@ -26,7 +26,7 @@ Run `checkbox-build` build job:
 pipeline build checkbox-build -u <JENKINS USERNAME> -p <JENKINS PASSWORD>
 ```
 
-### Discussion
+## Discussion
 
 Some of the challenging issues we stumbled at during the automation of the setup process:
 
@@ -44,7 +44,7 @@ mongodb_user:
 
 - The last big problem we encountered was that when running 'npm test' after triggering our build job, the Jenkins server could not find the environmental variables MONGO_USER, MONGO_PASSWORD, etc. It had turned out that we were previously starting the Jenkins server in the 'jenkins_config' playbook BEFORE defining these variables in the 'build-env' playbook, so the Jenkins server did not inherit these environmental variables. We corrected this problem by instead defining the variables in the 'jenkins_config' playbook before the last restart of the Jenkins server and were then able to succesfully pass all the required tests after triggering our build job. 
 
-### Screencast
+## Screencast
 
-**[Screencast Link](https://youtu.be/NQFJzpqOw0M)**
+### **[Screencast Link](https://youtu.be/NQFJzpqOw0M)**
 [![Screencast](assets/M1-build.png)](https://www.youtube.com/watch?v=NQFJzpqOw0M)
