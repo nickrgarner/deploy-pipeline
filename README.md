@@ -47,3 +47,4 @@ mongodb_user:
 ### Screencast
 
 **[Screencast Link](https://youtu.be/NQFJzpqOw0M)**
+[![Screencast](assets/M1-build.png)](https://www.youtube.com/watch?v=NQFJzpqOw0M)
