@@ -20,9 +20,9 @@ pipeline setup
 
 ***NOTE: If cloning the repo on to a host system that uses Windows OS you may need to update the line break types in '/cm/server-init.sh' from CRLF to LF before running the 'pipeline setup' command.
 
-Run `checkbox-build` build job:
+Run `checkbox.io` build job:
 
 ```shell
-pipeline build checkbox-build -u <JENKINS USERNAME> -p <JENKINS PASSWORD>
+pipeline build checkbox.io -u <JENKINS USERNAME> -p <JENKINS PASSWORD>
 ```
 
