@@ -16,11 +16,13 @@ exports.builder = (yargs) => {
   yargs.option("user", {
     alias: "u",
     type: "string",
+    default: "admin",
     description: "Jenkins User Name",
   });
   yargs.option("password", {
     alias: "p",
     type: "string",
+    default: "admin",
     description: "Jenkins Password",
   });
 };
@@ -32,7 +34,7 @@ exports.handler = async (argv) => {
     promisify: true,
   });
   (async () => {
-    await run(job, user, password);
+    await run(job);
   })();
 };
 
@@ -62,17 +64,8 @@ async function waitOnQueue(id) {
   });
 }
 
-async function run(job, user, password) {
+async function run(job) {
   console.log(chalk.greenBright("Triggering jenkins build job"));
-
-  console.log(chalk.blueBright("Updating jenkins jobs..."));
-  let result = sshSync(
-    `/home/vagrant/.local/bin/jenkins-jobs --conf /etc/jenkins_jobs/jenkins_jobs.ini --user ${user} --password ${password} update /bakerx/build-job.yml`,
-    "vagrant@192.168.33.20"
-  );
-  if (result.error) {
-    printError(result);
-  }
 
   console.log(chalk.blueBright(`Triggering job [${job}]...`));
   const queueId = await jenkins.job.build(job);
@@ -94,9 +87,7 @@ async function run(job, user, password) {
 
   log.on("end", async function () {
     const build = await getBuildStatus(job, buildId);
-    console.log(
-      chalk.blueBright(`Build finished with result: ${build.result}`)
-    );
+    console.log(chalk.blueBright(`Build finished with result: ${build.result}`));
   });
 }
 
