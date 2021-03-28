@@ -18,7 +18,7 @@ npm link
 pipeline setup
 ```
 
-***NOTE: If cloning the repo on to a host system that uses Windows OS you may need to update the line break types in '/cm/server-init.sh' from CRLF to LF before running the 'pipeline setup' command.
+**NOTE:** If cloning the repo onto a host system that uses Windows OS you may need to update the line endings style in `/cm/server-init.sh` from CRLF to LF before running the `pipeline setup` command.
 
 Run `checkbox.io` build job:
 
