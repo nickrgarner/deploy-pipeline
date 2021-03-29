@@ -2,6 +2,8 @@
 
 ## CSC 519 - DevOps, Spring 2021
 
+## [Test Checkpoint](CHECKPOINT.md)
+
 ## Usage
 
 Configure Jenkins and build environment:
@@ -26,3 +28,6 @@ Run `checkbox.io` build job:
 pipeline build checkbox.io -u <JENKINS USERNAME> -p <JENKINS PASSWORD>
 ```
 
+## Past Milestones
+### [Build README](M1%20Docs/README.md)
+### [Build Checkpoint](M1%20Docs/CHECKPOINT.md)
