@@ -27,53 +27,29 @@ function main() {
   var args = process.argv.slice(2);
 
   if (args.length == 0) {
-    // default value is self if no other script is provided.
-    args = ["analysis.js"];
+    // default value is current directory if no other args
+    args = [window.location.pathname];
   }
   var filePath = args[0];
 
-  console.log(getFiles(filePath, null));
+  console.log("Parsing ast and running static analysis...");
+  var builders = {};
+  complexity(filePath, builders);
+  console.log("Complete.");
 
-  // console.log("Parsing ast and running static analysis...");
-  // var builders = {};
-  // complexity(filePath, builders);
-  // console.log("Complete.");
-
-  // // Report
-  // for (var node in builders) {
-  //   var builder = builders[node];
-  //   builder.report();
-  // }
+  // Report
+  for (var node in builders) {
+    var builder = builders[node];
+    builder.report();
+  }
 }
 
 function complexity(filePath, builders) {
   var buf = fs.readFileSync(filePath, "utf8");
   var ast = esprima.parse(buf, options);
 
-  var i = 0;
-
-  // Initialize builder for file-level information
-  var fileBuilder = new FileBuilder();
-  fileBuilder.FileName = filePath;
-  builders[filePath] = fileBuilder;
-
   // Traverse program with a function visitor.
   traverseWithParents(ast, function (node) {
-    // File level calculations
-    // 1. Strings
-    if (node.type == "Literal" && typeof node.value == "string") {
-      fileBuilder.Strings++;
-    }
-
-    // 2. Packages
-    if (
-      node.type == "CallExpression" &&
-      node.callee.type == "Identifier" &&
-      node.callee.name == "require"
-    ) {
-      fileBuilder.ImportCount++;
-    }
-
     if (node.type === "FunctionDeclaration") {
       var builder = new FunctionBuilder();
 
@@ -90,6 +66,29 @@ function complexity(filePath, builders) {
       traverseWithParents(node, function (child) {
         if (child.type == "IfStatement") {
           builder.SimpleCyclomaticComplexity++;
+        }
+
+        // Message chaining
+        if (
+          child.type === "ExpressionStatement" &&
+          (child.expression === "CallExpression" ||
+            child.expression === "MemberExpression")
+        ) {
+          let currentLen = 1;
+          traverseWithParents(child, function (grandchild) {
+            if (
+              grandchild.type === "ExpressionStatement" &&
+              (grandchild.expression === "CallExpression" ||
+                grandchild.expression === "MemberExpression")
+            ) {
+              currentLen += 1;
+            }
+          });
+          // Update max chain length
+          builder.MaxMessageChain = Math.max(
+            builder.MaxMessageChain,
+            currentLen,
+          );
         }
       });
 
@@ -117,6 +116,8 @@ class FunctionBuilder {
     this.MaxNestingDepth = 0;
     // The max number of conditions if one decision statement.
     this.MaxConditions = 0;
+    // Length of longest message chain
+    this.MaxMessageChain = 1;
   }
 
   threshold() {
@@ -136,6 +137,10 @@ class FunctionBuilder {
       Length: [
         { t: 100, color: "red" },
         { t: 10, color: "yellow" },
+      ],
+      MaxMessageChain: [
+        { t: 10, color: "red" },
+        { t: 5, color: "yellow" },
       ],
     };
 
@@ -163,6 +168,10 @@ class FunctionBuilder {
       "SimpleCyclomaticComplexity",
       this.SimpleCyclomaticComplexity,
     )} ${this.SimpleCyclomaticComplexity}}`;
+    this.MaxMessageChain = chalk`{${showScore(
+      "MaxMessageChain",
+      this.MaxMessageChain,
+    )} ${this.MaxMessageChain}}`;
   }
 
   report() {
@@ -172,27 +181,10 @@ class FunctionBuilder {
       chalk`{blue.underline ${this.FunctionName}}(): at line #${this.StartLine}
 Parameters: ${this.ParameterCount}\tLength: ${this.Length}
 Cyclomatic: ${this.SimpleCyclomaticComplexity}\tHalstead: ${this.Halstead}
-MaxDepth: ${this.MaxNestingDepth}\tMaxConditions: ${this.MaxConditions}\n`,
+MaxDepth: ${this.MaxNestingDepth}\tMaxConditions: ${this.MaxConditions}
+MaxMessageChain: ${this.MaxMessageChain}\n`,
     );
   }
-}
-
-// A builder for storing file level information.
-function FileBuilder() {
-  this.FileName = "";
-  // Number of strings in a file.
-  this.Strings = 0;
-  // Number of imports in a file.
-  this.ImportCount = 0;
-
-  this.report = function () {
-    console.log(
-      chalk`{magenta.underline ${this.FileName}}
-Packages: ${this.ImportCount}
-Strings ${this.Strings}
-`,
-    );
-  };
 }
 
 // A function following the Visitor pattern.
