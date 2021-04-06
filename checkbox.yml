@@ -31,8 +31,11 @@
           }
         }
         stage("Running static analysis...") {
-          dir('/bakerx/') {
-            sh "node analysis.js /tmp/jenkins/checkbox.io/server-side/site"
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh "node /bakerx/analysis.js ../site"
+          }
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            sh 'exit 1'
           }
         }
         stage("Running tests...") {

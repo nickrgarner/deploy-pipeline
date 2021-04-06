@@ -5,6 +5,8 @@ const chalk = require("chalk");
 const path = require("path");
 const jsreg = /.*\.js$/;
 
+var jenkinsStatus = true;
+
 function getFiles(dir, files) {
   var fileList = fs.readdirSync(dir);
   if (files == null) {
@@ -12,6 +14,9 @@ function getFiles(dir, files) {
   }
 
   fileList.forEach(function (file) {
+    if (file === "node_modules") {
+      return;
+    }
     if (fs.statSync(dir + "/" + file).isDirectory()) {
       // Call recursively
       files = getFiles(dir + "/" + file, files);
@@ -47,8 +52,27 @@ function main() {
     for (var node in builders) {
       var builder = builders[node];
       builder.report();
+      // Check for failing metrics
+      if (builder.Length > 100) {
+        console.log(
+          chalk.red("Job Failure: Function length exceeds 100 lines"),
+        );
+        jenkinsStatus = false;
+      }
+      if (builder.MaxMessageChain > 10) {
+        console.log(
+          chalk.red("Job Failure: Max Message Chain length exceeds 10"),
+        );
+        jenkinsStatus = false;
+      }
+      if (builder.MaxNestingDepth > 5) {
+        console.log(chalk.red("Job Failure: Max Nesting Depth exceeds 5"));
+        jenkinsStatus = false;
+      }
     }
   }
+
+  return jenkinsStatus;
 }
 
 function complexity(filePath, builders) {
