@@ -32,15 +32,22 @@ function main() {
   }
   var filePath = args[0];
 
-  console.log("Parsing ast and running static analysis...");
-  var builders = {};
-  complexity(filePath, builders);
-  console.log("Complete.");
+  var files = getFiles(filePath, files);
 
-  // Report
-  for (var node in builders) {
-    var builder = builders[node];
-    builder.report();
+  for (var index in files) {
+    console.log("Parsing ast and running static analysis on " + files[index]);
+    var builders = {};
+    complexity(files[index], builders);
+    console.log("Complete.");
+
+    // Report
+    if (Object.keys(builders).length === 0) {
+      console.log(chalk.red("No function declarations found.\n"));
+    }
+    for (var node in builders) {
+      var builder = builders[node];
+      builder.report();
+    }
   }
 }
 
