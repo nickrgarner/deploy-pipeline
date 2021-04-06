@@ -76,18 +76,10 @@ function complexity(filePath, builders) {
         }
 
         // Message chaining
-        if (
-          child.type === "ExpressionStatement" &&
-          (child.expression === "CallExpression" ||
-            child.expression === "MemberExpression")
-        ) {
-          let currentLen = 1;
+        if (child.type === "MemberExpression") {
+          var currentLen = 0;
           traverseWithParents(child, function (grandchild) {
-            if (
-              grandchild.type === "ExpressionStatement" &&
-              (grandchild.expression === "CallExpression" ||
-                grandchild.expression === "MemberExpression")
-            ) {
+            if (grandchild.type === "MemberExpression") {
               currentLen += 1;
             }
           });
@@ -124,7 +116,7 @@ class FunctionBuilder {
     // The max number of conditions if one decision statement.
     this.MaxConditions = 0;
     // Length of longest message chain
-    this.MaxMessageChain = 1;
+    this.MaxMessageChain = 0;
   }
 
   threshold() {
