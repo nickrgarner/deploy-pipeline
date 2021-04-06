@@ -1,48 +1,48 @@
 ---
 - job:
-      name: checkbox.io
-      project-type: pipeline
-      defaults: global
-      description: "Builds checkbox.io program and runs npm test."
-      disabled: false
-      display-name: "checkbox.io Pipeline Build"
-      concurrent: false
-      retry-count: 3
-      dsl: |
-          node {
-            stage("Cloning checkbox.io...") {
-              dir('/tmp/jenkins') {
-                sh 'rm -rf checkbox.io'
-              }
-            }
-            stage("Cloning checkbox.io...") {
-              dir('/tmp/jenkins') {
-                sh 'git clone https://github.com/chrisparnin/checkbox.io.git'
-              }
-            }
-            stage("Installing dependencies...") {
-              dir('/tmp/jenkins/checkbox.io/server-side/site') {
-                sh 'npm install'
-              }
-            }
-            stage("Starting checkbox.io server...") {
-              dir('/tmp/jenkins/checkbox.io/server-side/site') {
-                sh "pm2 start server.js"
-              }
-            }
-            stage("Running static analysis...") {
-              dir('/bakerx/') {
-                sh "node analysis.js /tmp/jenkins/checkbox.io/"
-              }
-            }
-            stage("Running tests...") {
-              dir('/tmp/jenkins/checkbox.io/server-side/site') {
-                sh "npm test"
-              }
-            }
-            stage("Stopping server...") {
-              dir('/tmp/jenkins/checkbox.io/server-side/site') {
-                sh "pm2 stop server.js"
-              }
-            }
+    name: checkbox.io
+    project-type: pipeline
+    defaults: global
+    description: "Builds checkbox.io program and runs npm test."
+    disabled: false
+    display-name: "checkbox.io Pipeline Build"
+    concurrent: false
+    retry-count: 3
+    dsl: |
+      node {
+        stage("Cloning checkbox.io...") {
+          dir('/tmp/jenkins') {
+            sh 'rm -rf checkbox.io'
           }
+        }
+        stage("Cloning checkbox.io...") {
+          dir('/tmp/jenkins') {
+            sh 'git clone https://github.com/chrisparnin/checkbox.io.git'
+          }
+        }
+        stage("Installing dependencies...") {
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh 'npm install'
+          }
+        }
+        stage("Starting checkbox.io server...") {
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh "pm2 start server.js"
+          }
+        }
+        stage("Running static analysis...") {
+          dir('/bakerx/') {
+            sh "node analysis.js /tmp/jenkins/checkbox.io/server-side/site"
+          }
+        }
+        stage("Running tests...") {
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh "npm test"
+          }
+        }
+        stage("Stopping server...") {
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh "pm2 stop server.js"
+          }
+        }
+      }
