@@ -89,6 +89,21 @@ function complexity(filePath, builders) {
             currentLen,
           );
         }
+
+        // Max Nesting Depth
+        if (child.type === "IfStatement") {
+          var currentDepth = 0;
+          traverseWithParents(child, function (grandchild) {
+            if (grandchild.type === "IfStatement") {
+              currentDepth += 1;
+            }
+          });
+          // Update max depth
+          builder.MaxNestingDepth = Math.max(
+            builder.MaxNestingDepth,
+            currentDepth,
+          );
+        }
       });
 
       // 6. Halstead
@@ -137,6 +152,10 @@ class FunctionBuilder {
         { t: 100, color: "red" },
         { t: 10, color: "yellow" },
       ],
+      MaxNestingDepth: [
+        { t: 5, color: "red" },
+        { t: 3, color: "yellow" },
+      ],
       MaxMessageChain: [
         { t: 10, color: "red" },
         { t: 5, color: "yellow" },
@@ -167,6 +186,10 @@ class FunctionBuilder {
       "SimpleCyclomaticComplexity",
       this.SimpleCyclomaticComplexity,
     )} ${this.SimpleCyclomaticComplexity}}`;
+    this.MaxNestingDepth = chalk`{${showScore(
+      "MaxNestingDepth",
+      this.MaxNestingDepth,
+    )} ${this.MaxNestingDepth}}`;
     this.MaxMessageChain = chalk`{${showScore(
       "MaxMessageChain",
       this.MaxMessageChain,
