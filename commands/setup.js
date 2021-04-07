@@ -15,17 +15,25 @@ exports.builder = (yargs) => {
       type: "string",
     },
   });
+  yargs.option("gh-user", {
+    type: "string",
+    description: "GitHub User Name",
+  });
+  yargs.option("gh-pass", {
+    type: "string",
+    description: "GitHub Password",
+  });
 };
 
 exports.handler = async (argv) => {
-  const { privateKey } = argv;
+  const { privateKey, "gh-user": ghUser, "gh-pass": ghPass } = argv;
 
   (async () => {
-    await run(privateKey);
+    await run({privateKey, ghUser, ghPass});
   })();
 };
 
-async function run(privateKey) {
+async function run({privateKey, ghUser, ghPass}) {
   console.log(chalk.greenBright("Installing config-srv server!"));
 
   console.log(chalk.blueBright("Downloading focal image..."));
