@@ -52,23 +52,6 @@ function main() {
     for (var node in builders) {
       var builder = builders[node];
       builder.report();
-      // Check for failing metrics
-      if (builder.Length > 100) {
-        console.log(
-          chalk.red("Job Failure: Function length exceeds 100 lines"),
-        );
-        jenkinsStatus = false;
-      }
-      if (builder.MaxMessageChain > 10) {
-        console.log(
-          chalk.red("Job Failure: Max Message Chain length exceeds 10"),
-        );
-        jenkinsStatus = false;
-      }
-      if (builder.MaxNestingDepth > 5) {
-        console.log(chalk.red("Job Failure: Max Nesting Depth exceeds 5"));
-        jenkinsStatus = false;
-      }
     }
   }
 
@@ -91,6 +74,17 @@ function complexity(filePath, builders) {
       builder.ParameterCount = node.params.length;
       // 4. Method Length
       builder.Length = node.loc.end.line - node.loc.start.line;
+      // Check for metrics violation
+      if (builder.Length > 100) {
+        console.log(
+          chalk.red(
+            "Job Failure: Function length exceeds 100 lines in function ",
+          ) +
+            chalk.blue(functionName(node)) +
+            "()",
+        );
+        jenkinsStatus = false;
+      }
 
       // With new visitor(s)...
       // 5. CyclomaticComplexity
@@ -107,6 +101,20 @@ function complexity(filePath, builders) {
               currentLen += 1;
             }
           });
+
+          // Check for metrics violation
+          if (currentLen > 10) {
+            console.log(
+              chalk.red(
+                "Job Failure: Message chain length exceeds 10 in function ",
+              ) +
+                chalk.blue(functionName(node)) +
+                "(): line " +
+                child.loc.start.line,
+            );
+            jenkinsStatus = false;
+          }
+
           // Update max chain length
           builder.MaxMessageChain = Math.max(
             builder.MaxMessageChain,
@@ -122,6 +130,18 @@ function complexity(filePath, builders) {
               currentDepth += 1;
             }
           });
+
+          // Check for metrics violation
+          if (currentDepth > 5) {
+            console.log(
+              chalk.red("Job Failure: Nesting depth exceeds 5 in function ") +
+                chalk.blue(functionName(node)) +
+                "(): line " +
+                child.loc.start.line,
+            );
+            jenkinsStatus = false;
+          }
+
           // Update max depth
           builder.MaxNestingDepth = Math.max(
             builder.MaxNestingDepth,
