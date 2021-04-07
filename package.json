@@ -11,5 +11,8 @@
     "chalk": "^4.1.0",
     "jenkins": "^0.28.1",
     "yargs": "^15.4.1"
+  },
+  "devDependencies": {
+    "esprima": "^4.0.1"
   }
 }

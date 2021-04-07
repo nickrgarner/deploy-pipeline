@@ -30,6 +30,14 @@
             sh "pm2 start server.js"
           }
         }
+        stage("Running static analysis...") {
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh "node /bakerx/analysis.js ../site"
+          }
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            sh 'exit 1'
+          }
+        }
         stage("Running tests...") {
           dir('/tmp/jenkins/checkbox.io/server-side/site') {
             sh "npm test"
