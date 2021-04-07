@@ -81,6 +81,15 @@
     timeout: 60
   become: true
 
+- name: Install credentials plugin
+  jenkins_plugin:
+    name: credentials-plugin
+    url: "http://192.168.33.20:9000"
+    url_username: "{{jenkins.username}}"
+    url_password: "{{jenkins.password}}"
+    timeout: 60
+  become: true
+
 - name: Install dsl plugin
   jenkins_plugin:
     name: job-dsl-plugin
@@ -113,6 +122,8 @@
     - { key: "MONGO_USER", value: "{{mongo.MONGO_USER}}" }
     - { key: "MONGO_PASSWORD", value: "{{mongo.MONGO_PASSWORD}}" }
     - { key: "MONGO_IP", value: "{{mongo.MONGO_IP}}" }
+    - { key: "GH_USER", value: "{{GH_USER}}" }
+    - { key: "GH_PASS", value: "{{GH_PASS}}" }
   become: true
 
 - name: Restart Jenkins

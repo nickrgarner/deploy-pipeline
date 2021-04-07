@@ -1,0 +1,23 @@
+---
+- job:
+    name: iTrust2
+    project-type: pipeline
+    defaults: global
+    description: "Builds iTrust2 program."
+    disabled: false
+    display-name: "iTrust2 Pipeline Build"
+    concurrent: false
+    retry-count: 3
+    dsl: |
+      node {
+        stage("Removing iTrust2...") {
+          dir('/tmp/jenkins') {
+            sh 'rm -rf itrust'
+          }
+        }
+        stage("Cloning iTrust2...") {
+          dir('/tmp/jenkins') {
+            sh 'git clone https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8'
+          }
+        }
+      }

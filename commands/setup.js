@@ -17,12 +17,16 @@ exports.builder = (yargs) => {
   });
   yargs.option("gh-user", {
     type: "string",
-    description: "GitHub User Name",
+    description: "NCSU GitHub Username",
   });
   yargs.option("gh-pass", {
     type: "string",
-    description: "GitHub Password",
+    description: "NCSU GitHub Password",
   });
+  yargs.demandOption(
+    ["gh-user", "gh-pass"],
+    "Please provide NCSU Github credentials.",
+  );
 };
 
 exports.handler = async (argv) => {
@@ -63,7 +67,7 @@ async function run({privateKey, ghUser, ghPass}) {
   }
 
   console.log(chalk.blueBright("Running init script..."));
-  result = sshSync("/bakerx/cm/server-init.sh", "vagrant@192.168.33.20");
+  result = sshSync(`/bakerx/cm/server-init.sh ${ghUser ? `-u ${ghUser}` : ''} ${ghPass ? `-p ${ghPass}` : ''}`, "vagrant@192.168.33.20");
   if (result.error) {
     printError(result);
   }
