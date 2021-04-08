@@ -42,7 +42,7 @@ exports.handler = async (argv) => {
 async function run(count, ghuser, ghpass) {
   console.log(chalk.blueBright("Cloning iTrust2 repository..."));
   let result = sshSync(
-    `git clone https://${ghuser}:${ghpass}@github.ncsu.edu/engr-csc326-staff/iTrust2-v8`,
+    `cd /tmp && git clone https://${ghuser}:${ghpass}@github.ncsu.edu/engr-csc326-staff/iTrust2-v8`,
     "vagrant@192.168.33.10",
   );
   if (result.error) {
@@ -50,7 +50,10 @@ async function run(count, ghuser, ghpass) {
   }
 
   console.log(chalk.blueBright(`Fuzzing iTrust2 with ${count} mutations...`));
-  let result = sshSync(``);
+  let result = sshSync(`node /bakerx/lib/driver.js ${count}`);
+  if (result.error) {
+    printError(result);
+  }
 }
 
 // Code under test...
