@@ -10,7 +10,7 @@
     retry-count: 3
     dsl: |
       node {
-        stage("Cloning checkbox.io...") {
+        stage("Removing checkbox.io...") {
           dir('/tmp/jenkins') {
             sh 'rm -rf checkbox.io'
           }

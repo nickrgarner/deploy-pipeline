@@ -43,6 +43,9 @@
 - name: Push checkbox.io build job to Jenkins
   shell: /home/vagrant/.local/bin/jenkins-jobs --conf /etc/jenkins_jobs/jenkins_jobs.ini --user {{jenkins.username}} --password {{jenkins.password}} update /bakerx/checkbox.yml
 
+- name: Push iTrust build job to Jenkins
+  shell: /home/vagrant/.local/bin/jenkins-jobs --conf /etc/jenkins_jobs/jenkins_jobs.ini --user {{jenkins.username}} --password {{jenkins.password}} update /bakerx/itrust.yml
+
 - name: Install pm2 to run checkbox server
   npm:
     name: pm2

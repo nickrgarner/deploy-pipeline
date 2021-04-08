@@ -15,17 +15,29 @@ exports.builder = (yargs) => {
       type: "string",
     },
   });
+  yargs.option("gh-user", {
+    type: "string",
+    description: "NCSU GitHub Username",
+  });
+  yargs.option("gh-pass", {
+    type: "string",
+    description: "NCSU GitHub Password",
+  });
+  yargs.demandOption(
+    ["gh-user", "gh-pass"],
+    "Please provide NCSU Github credentials.",
+  );
 };
 
 exports.handler = async (argv) => {
-  const { privateKey } = argv;
+  const { privateKey, "gh-user": ghUser, "gh-pass": ghPass } = argv;
 
   (async () => {
-    await run(privateKey);
+    await run({privateKey, ghUser, ghPass});
   })();
 };
 
-async function run(privateKey) {
+async function run({privateKey, ghUser, ghPass}) {
   console.log(chalk.greenBright("Installing config-srv server!"));
 
   console.log(chalk.blueBright("Downloading focal image..."));
@@ -55,7 +67,7 @@ async function run(privateKey) {
   }
 
   console.log(chalk.blueBright("Running init script..."));
-  result = sshSync("/bakerx/cm/server-init.sh", "vagrant@192.168.33.20");
+  result = sshSync(`/bakerx/cm/server-init.sh ${ghUser ? `-u ${ghUser}` : ''} ${ghPass ? `-p ${ghPass}` : ''}`, "vagrant@192.168.33.20");
   if (result.error) {
     printError(result);
   }
