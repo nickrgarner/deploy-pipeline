@@ -81,15 +81,6 @@
     timeout: 60
   become: true
 
-- name: Install credentials plugin
-  jenkins_plugin:
-    name: credentials-plugin
-    url: "http://192.168.33.20:9000"
-    url_username: "{{jenkins.username}}"
-    url_password: "{{jenkins.password}}"
-    timeout: 60
-  become: true
-
 - name: Install dsl plugin
   jenkins_plugin:
     name: job-dsl-plugin
