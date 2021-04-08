@@ -29,6 +29,12 @@
     state: latest
   become: true
 
+- name: Install maven
+  apt:
+    pkg: maven
+    state: latest
+  become: true
+
 - name: Install pip3 for Mongo Collection Dependencies
   apt:
     pkg: python3-pip
@@ -82,5 +88,45 @@
     password: "{{mongo.MONGO_PASSWORD}}"
     login_port: "{{mongo.MONGO_PORT}}"
     roles: readWrite
+    state: present
+  become: true
+
+- name: Install MySQL client
+  apt:
+    pkg: mysql-server
+    state: latest
+  become: true
+
+- name: Install PyMySQL
+  pip:
+    name: PyMySQL
+    state: latest
+  become: true
+
+- name: Install headless Chrome
+  shell: wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb | apt install
+  become: true
+
+- name: Start MySQL service
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Open Port 3306 for MySQL
+  firewalld:
+    zone: public
+    port: 3306/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  become: true
+
+- name: Create MySQL root user
+  mysql_user:
+    name: root
+    login_user: root
+    login_password: "{{mysql.MYSQL_PASS}}"
+    priv: "*.*:ALL"
     state: present
   become: true

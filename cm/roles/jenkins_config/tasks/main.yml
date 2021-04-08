@@ -100,6 +100,15 @@
     timeout: 60
   become: true
 
+- name: Install warnings-ng plugin
+  jenkins_plugin:
+    name: warnings-ng-plugin
+    url: "http://192.168.33.20:9000"
+    url_username: "{{jenkins.username}}"
+    url_password: "{{jenkins.password}}"
+    timeout: 60
+  become: true
+
 - name: Create environment variables
   lineinfile:
     dest: /etc/environment
@@ -115,6 +124,7 @@
     - { key: "MONGO_IP", value: "{{mongo.MONGO_IP}}" }
     - { key: "GH_USER", value: "{{GH_USER}}" }
     - { key: "GH_PASS", value: "{{GH_PASS}}" }
+    - { key: "MYSQL_PASS", value: "{{mysql.MYSQL_PASS}}" }
   become: true
 
 - name: Restart Jenkins
