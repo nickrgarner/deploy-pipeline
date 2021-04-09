@@ -91,15 +91,21 @@
     state: present
   become: true
 
-- name: Install MySQL client
+- name: Install MySQL server
   apt:
     pkg: mysql-server
     state: latest
   become: true
 
+- name: Install MySQL client
+  apt:
+    pkg: mysql-client
+    state: latest
+  become: true
+
 - name: Install PyMySQL
-  pip:
-    name: PyMySQL
+  apt:
+    name: python3-pymysql
     state: latest
   become: true
 
@@ -107,11 +113,18 @@
   shell: wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb | apt install
   become: true
 
-- name: Start MySQL service
+- name: Stop mysql
   service:
     name: mysql
-    state: started
-    enabled: yes
+    state: stopped
+  become: true
+
+- name: Set root password
+  template:
+    src: ../templates/root.cnf.j2
+    dest: /root/.my.cnf
+    mode: 0600
+  become: true
 
 - name: Open Port 3306 for MySQL
   firewalld:
@@ -122,11 +135,29 @@
     immediate: true
   become: true
 
-- name: Create MySQL root user
+- name: Start MySQL service
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+  become: true
+
+- name: Open root password
+  shell: mysql -u root -e 'UPDATE mysql.user SET plugin="mysql_native_password" WHERE user="root" AND host="localhost"'
+  become: true
+
+- name: Flush privileges
+  shell: mysql -u root -e 'FLUSH PRIVILEGES'
+  become: true
+
+- name: Set MySQL root user
   mysql_user:
-    name: root
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_host: localhost
+    login_port: 3306
     login_user: root
-    login_password: "{{mysql.MYSQL_PASS}}"
-    priv: "*.*:ALL"
+    login_password: ""
+    name: root
+    password: "{{mysql.MYSQL_PASS}}"
     state: present
   become: true
