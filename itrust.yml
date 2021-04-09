@@ -33,13 +33,20 @@
             sh 'sudo mysql -u root -e "DROP DATABASE IF EXISTS iTrust2_test"'
           }
         }
-        stage("Calculating code coverage...") {
+        stage("Running Checkstyle and code coverage...") {
           dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
             jacoco(
               execPattern: 'target/coverage-reports/*.exec',
               classPattern: 'target/classes',
               sourcePattern: 'src/main/java',
               exclusionPattern:'src/test'
+            )
+            recordIssues(
+              enabledForFailure: true,
+              tool: checkStyle(
+                pattern: 'src/test/resources/reporting/csc_checkstyle.xml',
+                reportEncoding: 'UTF-8'
+              )
             )
           }
         }
