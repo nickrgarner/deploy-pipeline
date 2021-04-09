@@ -22,6 +22,14 @@
           dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2/src/main/resources') {
             sh 'cp -rf /bakerx/application.yml .'
           }
+          dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
+            jacoco(
+              execPattern: 'target/*.exec',
+              classPattern: 'target/classes',
+              sourcePattern: 'src/main/java',
+              exclusionPattern:'src/test'
+            )
+          }
         }
         stage("Running static analysis and integration tests...") {
           dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
