@@ -44,7 +44,7 @@
             recordIssues(
               enabledForFailure: true,
               tool: checkStyle(
-                pattern: 'src/test/resources/reporting/csc_checkstyle.xml',
+                pattern: 'checkstyle-result.xml',
                 reportEncoding: 'UTF-8'
               )
             )
