@@ -42,7 +42,7 @@ async function run(count, ghuser, ghpass) {
   console.log(chalk.blueBright("Cloning iTrust2 repository..."));
   let result = sshSync(`rm -rf /bakerx/iTrust2-v8`, "vagrant@192.168.33.20");
   result = sshSync(
-    `git clone https://${ghuser}:${ghpass}@github.ncsu.edu/engr-csc326-staff/iTrust2-v8`,
+    `cd /bakerx; git clone https://${ghuser}:${ghpass}@github.ncsu.edu/engr-csc326-staff/iTrust2-v8`,
     "vagrant@192.168.33.20",
   );
   if (result.error) {
