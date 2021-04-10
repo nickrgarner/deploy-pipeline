@@ -10,6 +10,9 @@
     retry-count: 3
     dsl: |
       node {
+        stage("Killing processes on Port 9001...") {
+          sh 'fuser -k 9001/tcp || true'
+        }
         stage("Removing iTrust...") {
           dir('/var/lib/jenkins/workspace') {
             sh 'rm -rf iTrust2-v8'
@@ -33,21 +36,34 @@
             sh 'sudo mysql -u root -e "DROP DATABASE IF EXISTS iTrust2_test"'
           }
         }
-        stage("Running Checkstyle and code coverage...") {
-          dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
-            jacoco(
-              execPattern: 'target/coverage-reports/*.exec',
-              classPattern: 'target/classes',
-              sourcePattern: 'src/main/java',
-              exclusionPattern:'src/test'
-            )
-            recordIssues(
-              enabledForFailure: true,
-              tool: checkStyle(
-                pattern: 'checkstyle-result.xml',
-                reportEncoding: 'UTF-8'
+        stage("Killing processes on Port 9001...") {
+          sh 'fuser -k 9001/tcp || true'
+        }
+        post {
+          always {
+            dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
+              recordIssues(
+                enabledForFailure: true,
+                tool: checkStyle(
+                  pattern: 'checkstyle-result.xml',
+                  reportEncoding: 'UTF-8'
+                ),
+                qualityGates: [[
+                  threshold: 1,
+                  type: 'TOTAL',
+                  unstable: true
+                ]]
               )
-            )
+              jacoco(
+                execPattern: 'target/coverage-reports/*.exec',
+                classPattern: 'target/classes',
+                sourcePattern: 'src/main/java',
+                exclusionPattern:'src/test',
+                changeBuildStatus: true,
+                minimumLineCoverage: '80%',
+                runAlways: true
+              )
+            }
           }
         }
       }
