@@ -1,6 +1,7 @@
 node_modules/
 *.retry
 .env
+.mutations
 .vault-pass
 etc/
 checkbox.io
