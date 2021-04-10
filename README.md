@@ -46,6 +46,8 @@ pipeline useful-tests -c <repetitions> --gh-user <NCSU Github User> --gh-pass <N
 - Jenkins plugins are easy to autonomously install, but hard to autonomously configure. Documentation standards for Jenkins plugins seems to be highly variable and scattered in all different places, with the official plugin pages on the Jenkins site having very barebones information.
 - Abstract Syntax Trees are very powerful for performing static analysis, but do require some trial and error to get acquainted with the token types that a particular parser uses. We had to play around a lot to find the right token types to use for each of the metrics we were required to implement.
 
+## [Screencast 1 - Static Analysis and iTrust Build Job](https://youtu.be/IgJYQdkNrak)
+
 ## Past Milestones
 ### [Build README](M1%20Docs/README.md)
 ### [Build Checkpoint](M1%20Docs/CHECKPOINT.md)
