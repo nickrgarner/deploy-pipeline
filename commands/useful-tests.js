@@ -35,7 +35,7 @@ exports.handler = async (argv) => {
   const { count, ghuser, ghpass } = argv;
 
   (async () => {
-    await runs(count, ghuser, ghpass);
+    await run(count, ghuser, ghpass);
   })();
 };
 
