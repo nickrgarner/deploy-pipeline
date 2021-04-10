@@ -50,26 +50,10 @@ async function run(count, ghuser, ghpass) {
   }
 
   console.log(chalk.blueBright(`Fuzzing iTrust2 with ${count} mutations...`));
-  result = sshSync(`node /bakerx/lib/driver.js ${count}`);
+  result = sshSync(
+    `node /bakerx/lib/driver.js ${count} /tmp/iTrust2-v8/iTrust2/src/main/java/edu/ncsu/csc/iTrust2`,
+  );
   if (result.error) {
     printError(result);
   }
-}
-
-// Code under test...
-const marqdown = require("./test/marqdown");
-
-// Seed inputs
-let mdA = fs.readFileSync("test/test.md", "utf-8");
-let mdB = fs.readFileSync("test/simple.md", "utf-8");
-
-let args = process.argv.slice(2);
-const runs = args.length > 0 ? args[0] : 1000;
-
-// Fuzz function 1000 (or given) times, with given seed string inputs.
-mtfuzz(runs, [mdA, mdB], (md) => marqdown.render(md));
-
-function printError(result) {
-  console.log(result.error);
-  process.exit(result.status);
 }
