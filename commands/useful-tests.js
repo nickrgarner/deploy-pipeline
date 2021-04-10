@@ -5,7 +5,7 @@ const os = require("os");
 
 const scpSync = require("../lib/scp");
 const sshSync = require("../lib/ssh");
-const mtfuzz = require("./lib/driver").mtfuzz;
+const mtfuzz = require("../lib/driver").mtfuzz;
 const fs = require("fs");
 
 exports.command = "useful-tests";
@@ -50,7 +50,7 @@ async function run(count, ghuser, ghpass) {
   }
 
   console.log(chalk.blueBright(`Fuzzing iTrust2 with ${count} mutations...`));
-  let result = sshSync(`node /bakerx/lib/driver.js ${count}`);
+  result = sshSync(`node /bakerx/lib/driver.js ${count}`);
   if (result.error) {
     printError(result);
   }

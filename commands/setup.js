@@ -44,7 +44,7 @@ async function run(privateKey) {
   console.log(chalk.blueBright("Provisioning config-srv server..."));
   result = child.spawnSync(
     `bakerx`,
-    `run config-srv focal --ip 192.168.33.20 --memory=2048 --sync`.split(" "),
+    `run config-srv focal --ip 192.168.33.20 --memory=2048 --cpus=6 --sync`.split(" "),
     {
       shell: true,
       stdio: "inherit",
