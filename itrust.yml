@@ -10,14 +10,59 @@
     retry-count: 3
     dsl: |
       node {
+        stage("Killing processes on Port 9001...") {
+          sh 'fuser -k 9001/tcp || true'
+        }
         stage("Removing iTrust...") {
-          dir('/tmp/jenkins') {
-            sh 'rm -rf itrust'
+          dir('/var/lib/jenkins/workspace') {
+            sh 'rm -rf iTrust2-v8'
           }
         }
         stage("Cloning iTrust...") {
-          dir('/tmp/jenkins') {
+          dir('/var/lib/jenkins/workspace') {
             sh 'git clone https://$GH_USER:$GH_PASS@github.ncsu.edu/engr-csc326-staff/iTrust2-v8'
+          }
+          dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2/src/main/resources') {
+            sh 'cp -rf /bakerx/application.yml .'
+          }
+        }
+        stage("Running unit and integration tests...") {
+          dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
+            sh 'mvn clean test integration-test checkstyle:checkstyle'
+          }
+        }
+        stage("Resetting database...") {
+          dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
+            sh 'sudo mysql -u root -e "DROP DATABASE IF EXISTS iTrust2_test"'
+          }
+        }
+        stage("Killing processes on Port 9001...") {
+          sh 'fuser -k 9001/tcp || true'
+        }
+        stage("Running static analysis and code coverage...") {
+          dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
+            recordIssues(
+              enabledForFailure: true,
+              tool: checkStyle(
+                pattern: 'checkstyle-result.xml',
+                reportEncoding: 'UTF-8'
+              ),
+              qualityGates: [[
+                threshold: 1,
+                type: 'TOTAL',
+                unstable: true
+              ]]
+            )
+            jacoco(
+              execPattern: 'target/coverage-reports/*.exec',
+              classPattern: 'target/classes',
+              sourcePattern: 'src/main/java',
+              exclusionPattern:'src/test',
+              changeBuildStatus: true,
+              minimumLineCoverage: '80',
+              maximumLineCoverage: '100',
+              runAlways: true
+            )
           }
         }
       }

@@ -72,6 +72,15 @@
     state: absent
   become: true
 
+- name: Install Jacoco plugin
+  jenkins_plugin:
+    name: jacoco
+    url: "http://192.168.33.20:9000/"
+    url_username: "{{jenkins.username}}"
+    url_password: "{{jenkins.password}}"
+    timeout: 60
+  become: true
+
 - name: Install pipeline plugin
   jenkins_plugin:
     name: build-pipeline-plugin
@@ -100,6 +109,15 @@
     timeout: 60
   become: true
 
+- name: Install warnings-ng plugin
+  jenkins_plugin:
+    name: warnings-ng
+    url: "http://192.168.33.20:9000"
+    url_username: "{{jenkins.username}}"
+    url_password: "{{jenkins.password}}"
+    timeout: 60
+  become: true
+
 - name: Create environment variables
   lineinfile:
     dest: /etc/environment
@@ -115,6 +133,7 @@
     - { key: "MONGO_IP", value: "{{mongo.MONGO_IP}}" }
     - { key: "GH_USER", value: "{{GH_USER}}" }
     - { key: "GH_PASS", value: "{{GH_PASS}}" }
+    - { key: "MYSQL_PASS", value: "{{mysql.MYSQL_PASS}}" }
   become: true
 
 - name: Restart Jenkins
