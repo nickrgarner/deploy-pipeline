@@ -10,7 +10,7 @@
     retry-count: 3
     dsl: |
       node {
-        stage("Cloning checkbox.io...") {
+        stage("Removing checkbox.io...") {
           dir('/tmp/jenkins') {
             sh 'rm -rf checkbox.io'
           }
@@ -28,6 +28,14 @@
         stage("Starting checkbox.io server...") {
           dir('/tmp/jenkins/checkbox.io/server-side/site') {
             sh "pm2 start server.js"
+          }
+        }
+        stage("Running static analysis...") {
+          dir('/tmp/jenkins/checkbox.io/server-side/site') {
+            sh "node /bakerx/analysis.js ../site"
+          }
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            sh 'exit 1'
           }
         }
         stage("Running tests...") {

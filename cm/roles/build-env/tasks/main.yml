@@ -29,6 +29,12 @@
     state: latest
   become: true
 
+- name: Install maven
+  apt:
+    pkg: maven
+    state: latest
+  become: true
+
 - name: Install pip3 for Mongo Collection Dependencies
   apt:
     pkg: python3-pip
@@ -42,6 +48,9 @@
 
 - name: Push checkbox.io build job to Jenkins
   shell: /home/vagrant/.local/bin/jenkins-jobs --conf /etc/jenkins_jobs/jenkins_jobs.ini --user {{jenkins.username}} --password {{jenkins.password}} update /bakerx/checkbox.yml
+
+- name: Push iTrust build job to Jenkins
+  shell: /home/vagrant/.local/bin/jenkins-jobs --conf /etc/jenkins_jobs/jenkins_jobs.ini --user {{jenkins.username}} --password {{jenkins.password}} update /bakerx/itrust.yml
 
 - name: Install pm2 to run checkbox server
   npm:
@@ -80,4 +89,92 @@
     login_port: "{{mongo.MONGO_PORT}}"
     roles: readWrite
     state: present
+  become: true
+
+- name: Install MySQL server
+  apt:
+    pkg: mysql-server
+    state: latest
+  become: true
+
+- name: Install MySQL client
+  apt:
+    pkg: mysql-client
+    state: latest
+  become: true
+
+- name: Install PyMySQL
+  apt:
+    name: python3-pymysql
+    state: latest
+  become: true
+
+- name: Get Chrome apt key
+  become: yes
+  apt_key:
+    url: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
+    state: present
+
+- name: Add Chrome repository
+  command: sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+  become: true
+
+- name: Update apt
+  apt:
+    update_cache: yes
+  become: true
+
+- name: Install Chrome
+  apt:
+    pkg: google-chrome-stable
+    state: latest
+  become: true
+
+- name: Stop mysql
+  service:
+    name: mysql
+    state: stopped
+  become: true
+
+- name: Set root password
+  template:
+    src: ../templates/root.cnf.j2
+    dest: /root/.my.cnf
+    mode: 0600
+  become: true
+
+- name: Open Port 3306 for MySQL
+  firewalld:
+    zone: public
+    port: 3306/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  become: true
+
+- name: Start MySQL service
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+  become: true
+
+- name: Set MySQL root user
+  mysql_user:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_host: localhost
+    login_port: 3306
+    login_user: root
+    login_password: ""
+    name: root
+    password: "{{mysql.MYSQL_PASS}}"
+    state: present
+  become: true
+
+- name: Open root password
+  shell: mysql -u root -e 'UPDATE mysql.user SET plugin="mysql_native_password" WHERE user="root" AND host="localhost"'
+  become: true
+
+- name: Flush privileges
+  shell: mysql -u root -e 'FLUSH PRIVILEGES'
   become: true

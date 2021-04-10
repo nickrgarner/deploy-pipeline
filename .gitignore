@@ -4,3 +4,5 @@ node_modules/
 .mutations
 .vault-pass
 etc/
+checkbox.io
+.prettierrc

@@ -13,6 +13,7 @@
     "yargs": "^15.4.1"
   },
   "devDependencies": {
-    "random-js": "^2.1.0"
+    "random-js": "^2.1.0",
+    "esprima": "^4.0.1"
   }
 }
