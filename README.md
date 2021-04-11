@@ -6,8 +6,7 @@
 
 ## Usage
 
-### Configure Jenkins and build environment:
-
+### Setup
 ```shell
 # Create .vault-pass file
 echo "<VAULT PASSWORD>\n" >> .vault-pass
@@ -15,7 +14,11 @@ echo "<VAULT PASSWORD>\n" >> .vault-pass
 # Install
 npm install
 npm link
+```
 
+### Configure Jenkins and build environment:
+
+```shell
 # Provision and configure VM
 pipeline setup --gh-user <NCSU Github User> --gh-pass <NCSU Github Password>
 ```
