@@ -47,7 +47,7 @@ pipeline useful-tests -c <repetitions> --gh-user <NCSU Github User> --gh-pass <N
 - Abstract Syntax Trees are very powerful for performing static analysis, but do require some trial and error to get acquainted with the token types that a particular parser uses. We had to play around a lot to find the right token types to use for each of the metrics we were required to implement.
 
 ## [Screencast 1 - Static Analysis and iTrust Build Job](https://youtu.be/IgJYQdkNrak)
-
+## [Screencast 2 - Mutation Fuzzer](https://youtu.be/e_FJ0DjnOJ0)
 ## [Useful Tests x1000 Output](mutations-output.txt)
 
 ## Past Milestones
