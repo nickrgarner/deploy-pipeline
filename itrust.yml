@@ -26,6 +26,11 @@
             sh 'cp -rf /bakerx/application.yml .'
           }
         }
+        stage("Creating WAR file for production deployment...") {
+          dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
+            sh 'mvn package'
+          }
+        }
         stage("Running unit and integration tests...") {
           dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
             sh 'mvn clean test integration-test checkstyle:checkstyle'
