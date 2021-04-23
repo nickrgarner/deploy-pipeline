@@ -5,10 +5,11 @@ const os = require("os");
 const scpSync = require("../lib/scp");
 const sshSync = require("../lib/ssh");
 const got = require("got");
+const fs = require("fs");
 
 var config = {};
 /** DO NOT CHECK IN TO REPO */
-config.token = 12345; // Add Digital Ocean api token here for now
+config.token = "d9b80146b1ab487fb9220b98fb6217e88787159aab248a0fa797f109f20fac62"; // Add Digital Ocean api token here for now
 /** DO NOT CHECK IN TO REPO */
 
 const headers = {
@@ -68,37 +69,47 @@ async function getDropletIP(id) {
     if (response.body.droplet) {
       let droplet = response.body.droplet;
       let ip = droplet.networks.v4[1].ip_address;
-      console.log(chalk.green(`IP Address of droplet: ` + ip));
+      console.log(chalk.greenBright(`IP Address of droplet: ` + ip));
       resolve(ip);
     }
   });
 }
 
-async function addToInventory(hostName, dropletIP) {
+async function addToInventory(itrustIP, checkboxIP) {
   return new Promise(async function (resolve, reject) {
-    let result = sshSync(
-      `echo "[${hostName}]\n${dropletIP} ansible_user=vagrant\n" > /bakerx/inventory.ini`,
+    fs.writeFile(
+      "inventory.ini",
+      `[itrust]\n${itrustIP} ansible_user=vagrant\n\n[checkbox]\n${checkboxIP} ansible_user=vagrant\n`,
+      (err) => {
+        if (err) {
+          reject(printError(err));
+        } else {
+          resolve(
+            console.log(
+              chalk.greenBright(`iTrust2 and checkbox.io deployments added to Ansible hosts`),
+            ),
+          );
+        }
+      },
     );
-    if (result.error) {
-      reject(printError(result));
-    } else {
-      resolve(chalk.green(`${hostName}@${dropletIP} added to Ansible hosts`));
-    }
   });
 }
 
 async function run() {
   console.log(chalk.greenBright("Provisioning Digital Ocean instance for iTrust2..."));
-  let itrustID = await createDroplet("itrust", nyc1, "debian-10-x64");
+  let itrustDroplet = await createDroplet("itrust", "nyc1", "debian-10-x64");
 
-  let ip = await getDropletIP(itrustID);
-  await addToInventory("itrust", ip);
+  await new Promise((r) => setTimeout(r, 10000)); // Give droplet time to spin up
+
+  let itrustIP = await getDropletIP(itrustDroplet);
 
   console.log(chalk.greenBright("Provisioning Digital Ocean instance for checkbox.io..."));
-  let checkboxID = await createDroplet("checkbox", nyc1, "debian-10-x64");
+  let checkboxDroplet = await createDroplet("checkbox", "nyc1", "debian-10-x64");
 
-  ip = await getDropletIP(checkboxID);
-  await addToInventory("checkbox", ip);
+  await new Promise((r) => setTimeout(r, 10000)); // Give droplet time to spin up
+
+  let checkboxIP = await getDropletIP(checkboxDroplet);
+  await addToInventory(itrustIP, checkboxIP);
 }
 
 function printError(result) {

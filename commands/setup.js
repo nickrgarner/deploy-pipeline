@@ -47,10 +47,14 @@ async function run({ privateKey, ghUser, ghPass }) {
   }
 
   console.log(chalk.blueBright("Provisioning config-srv server..."));
-  result = child.spawnSync(`bakerx`, `run config-srv focal --ip 192.168.33.20 --memory=4096 --sync`.split(" "), {
-    shell: true,
-    stdio: "inherit",
-  });
+  result = child.spawnSync(
+    `bakerx`,
+    `run config-srv focal --ip 192.168.33.20 --memory=4096 --sync`.split(" "),
+    {
+      shell: true,
+      stdio: "inherit",
+    },
+  );
   if (result.error) {
     printError(result);
   }
@@ -58,7 +62,7 @@ async function run({ privateKey, ghUser, ghPass }) {
   console.log(chalk.blueBright("Running init script..."));
   result = sshSync(
     `/bakerx/cm/server-init.sh ${ghUser ? `-u ${ghUser}` : ""} ${ghPass ? `-p ${ghPass}` : ""}`,
-    "vagrant@192.168.33.20"
+    "vagrant@192.168.33.20",
   );
   if (result.error) {
     printError(result);
