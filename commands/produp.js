@@ -9,7 +9,7 @@ const fs = require("fs");
 
 var config = {};
 /** DO NOT CHECK IN TO REPO */
-config.token = "d9b80146b1ab487fb9220b98fb6217e88787159aab248a0fa797f109f20fac62"; // Add Digital Ocean api token here for now
+config.token = "12345"; // Add Digital Ocean api token here for now
 /** DO NOT CHECK IN TO REPO */
 
 const headers = {
