@@ -1,3 +1,25 @@
+---
+# Setup checkbox.io dependencies on prod instance
+
+- name: Apt update
+  apt:
+    update_cache: true
+  become: true
+
+- name: Create environment variables
+  lineinfile:
+    dest: /etc/environment
+    regexp: "^{{item.key}}="
+    line: "{{item.key}}={{item.value}}"
+    create: yes
+  with_items:
+    - { key: "DB_ENGINE", value: "{{mongo.DB_ENGINE}}" }
+    - { key: "APP_PORT", value: "{{mongo.APP_PORT}}" }
+    - { key: "MONGO_PORT", value: "{{mongo.MONGO_PORT}}" }
+    - { key: "MONGO_USER", value: "{{mongo.MONGO_USER}}" }
+    - { key: "MONGO_PASSWORD", value: "{{mongo.MONGO_PASSWORD}}" }
+    - { key: "MONGO_IP", value: "{{mongo.MONGO_IP}}" }
+  become: true
 
 - name: Install nodejs
   apt:
@@ -11,16 +33,18 @@
     state: present
   become: true
 
+- name: Clone checkbox repo
+  shell: 'cd /bakerx && git clone https://github.com/chrisparnin/checkbox.io.git'
+  become: true
+
+- name: Run npm install
+  shell: 'cd /bakerx/checkbox.io/server-side/site && npm install'
+  become: true
+
 - name: Install mongodb
   apt:
     pkg: mongodb
     state: latest
-  become: true
-
-- name: Install nginx
-  apt:
-    pkg: nginx
-    state: present
   become: true
 
 - name: Install pm2 to run checkbox server
@@ -29,8 +53,6 @@
     global: yes
     state: present
   become: true
-
-# Unsure if everything below is totally necessary
 
 - name: Install pip3 for Mongo Collection Dependencies     
   apt:
@@ -68,4 +90,45 @@
     login_port: #"{{mongo.MONGO_PORT}}"
     roles: readWrite
     state: present
+  become: true
+
+- name: Install nginx
+  apt:
+    pkg: nginx
+    state: latest
+  become: true
+
+- name: Start nginx
+  service:
+    name: nginx
+    state: started
+  become: true
+
+- name: Copy nginx config file and restart nginx
+  copy:
+    src: /bakerx/templates/static_site.cfg
+    dest: /etc/nginx/sites-available/static_site.cfg
+  become: true
+
+- name: Create symlink
+  file:
+    src: /etc/nginx/sites-available/static_site.cfg
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+  become: true
+
+- name: Copy checkbox contents
+  copy:
+    src: /bakerx/checkbox.io/server-side/site
+    dest: /home/vagrant/static-site
+  become: true
+
+- name: start checkbox server
+  shell: 'cd /bakerx/checkbox.io/server-side/site && pm2 start server.js'
+  become: true
+
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted
   become: true
