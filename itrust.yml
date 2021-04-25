@@ -28,7 +28,7 @@
         }
         stage("Creating WAR file for production deployment...") {
           dir('/var/lib/jenkins/workspace/iTrust2-v8/iTrust2') {
-            sh 'mvn package'
+            sh 'mvn compile war:war'
           }
         }
         stage("Running unit and integration tests...") {
