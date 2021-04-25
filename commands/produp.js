@@ -19,9 +19,17 @@ const headers = {
 
 exports.command = "prod up";
 exports.desc = "Provision cloud instance for deployment";
+exports.builder = (yargs) => {
+  yargs.option("local", {
+    type: "boolean",
+    description: "Create VMs for local deployment",
+  });
+};
+
 exports.handler = async (argv) => {
+  const { local: isLocal } = argv;
   (async () => {
-    await run();
+    await run(isLocal);
   })();
 };
 
@@ -95,21 +103,59 @@ async function addToInventory(itrustIP, checkboxIP) {
   });
 }
 
-async function run() {
-  console.log(chalk.greenBright("Provisioning Digital Ocean instance for iTrust2..."));
-  let itrustDroplet = await createDroplet("itrust", "nyc1", "debian-10-x64");
+async function run(isLocal) {
+  if (isLocal) {
+    console.log(chalk.greenBright("Provisioning VMs for local canary analysis..."));
+    let result = child.spawnSync(`cp -rf ./templates/inventory.ini .`, {
+      shell: true,
+      stdio: "inherit",
+    });
+    if (result.error) {
+      printError(result);
+    }
 
-  await new Promise((r) => setTimeout(r, 10000)); // Give droplet time to spin up
+    console.log(chalk.greenBright("Spinning up Monitor VM..."));
+    result = child.spawnSync(`bakerx`, `run monitor focal --ip 192.168.33.24`.split(" "), {
+      shell: true,
+      stdio: "inherit",
+    });
+    if (result.error) {
+      printError(result);
+    }
 
-  let itrustIP = await getDropletIP(itrustDroplet);
+    console.log(chalk.greenBright("Spinning up checkbox.io VM..."));
+    result = child.spawnSync(`bakerx`, `run checkbox focal --ip 192.168.33.23`.split(" "), {
+      shell: true,
+      stdio: "inherit",
+    });
+    if (result.error) {
+      printError(result);
+    }
 
-  console.log(chalk.greenBright("Provisioning Digital Ocean instance for checkbox.io..."));
-  let checkboxDroplet = await createDroplet("checkbox", "nyc1", "debian-10-x64");
+    console.log(chalk.greenBright("Spinning up iTrust2 VM..."));
+    result = child.spawnSync(`bakerx`, `run itrust focal --ip 192.168.33.22`.split(" "), {
+      shell: true,
+      stdio: "inherit",
+    });
+    if (result.error) {
+      printError(result);
+    }
+  } else {
+    console.log(chalk.greenBright("Provisioning Digital Ocean instance for iTrust2..."));
+    let itrustDroplet = await createDroplet("itrust", "nyc1", "debian-10-x64");
 
-  await new Promise((r) => setTimeout(r, 10000)); // Give droplet time to spin up
+    await new Promise((r) => setTimeout(r, 10000)); // Give droplet time to spin up
 
-  let checkboxIP = await getDropletIP(checkboxDroplet);
-  await addToInventory(itrustIP, checkboxIP);
+    let itrustIP = await getDropletIP(itrustDroplet);
+
+    console.log(chalk.greenBright("Provisioning Digital Ocean instance for checkbox.io..."));
+    let checkboxDroplet = await createDroplet("checkbox", "nyc1", "debian-10-x64");
+
+    await new Promise((r) => setTimeout(r, 10000)); // Give droplet time to spin up
+
+    let checkboxIP = await getDropletIP(checkboxDroplet);
+    await addToInventory(itrustIP, checkboxIP);
+  }
 }
 
 function printError(result) {
