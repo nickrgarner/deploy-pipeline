@@ -43,6 +43,15 @@ pipeline useful-tests -c <repetitions> --gh-user <NCSU Github User> --gh-pass <N
 ```
 **NOTE:** NCSU Github Password should be a [Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) or a plain-text password that **escapes special characters**.
 
+### Provision production instances:
+```sh
+# Provision on Digital Ocean
+pipeline prod up
+
+# Provision locally with VirtualBox
+pipeline prod up --local
+```
+
 
 ## Past Milestones
 ### [Build README](M1%20Docs/README.md)
