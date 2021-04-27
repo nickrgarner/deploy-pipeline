@@ -2,7 +2,7 @@
 
 ## CSC 519 - DevOps, Spring 2021
 
-## [Milestone 2 Checkpoint](CHECKPOINT.md)
+## [Milestone 3 Checkpoint](CHECKPOINT.md)
 
 ## Usage
 
@@ -43,16 +43,9 @@ pipeline useful-tests -c <repetitions> --gh-user <NCSU Github User> --gh-pass <N
 ```
 **NOTE:** NCSU Github Password should be a [Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) or a plain-text password that **escapes special characters**.
 
-## Lessons Learned
-- Coding a mutation fuzzer requires careful consideration of what code can and cannot be manipulated due to compile errors. Often our fuzzer test runs would be "all or nothing" in which we would either get all compile errors or none. This was particularly the case with fuzzing of `<` and `>` causing issues with generics.
-- JaCoCo requires both a minimum AND corresponding maximum threshold value in order to gate a build. This particular quirk caused us issues for a while when setting up the build gates for the iTrust job.
-- Jenkins plugins are easy to autonomously install, but hard to autonomously configure. Documentation standards for Jenkins plugins seems to be highly variable and scattered in all different places, with the official plugin pages on the Jenkins site having very barebones information.
-- Abstract Syntax Trees are very powerful for performing static analysis, but do require some trial and error to get acquainted with the token types that a particular parser uses. We had to play around a lot to find the right token types to use for each of the metrics we were required to implement.
-
-## [Screencast 1 - Static Analysis and iTrust Build Job](https://youtu.be/IgJYQdkNrak)
-## [Screencast 2 - Mutation Fuzzer](https://youtu.be/e_FJ0DjnOJ0)
-## [Useful Tests x1000 Output](mutations-output.txt)
 
 ## Past Milestones
 ### [Build README](M1%20Docs/README.md)
 ### [Build Checkpoint](M1%20Docs/CHECKPOINT.md)
+### [Test README](M2%20Docs/README.md)
+### [Test Checkpoint](M2%20Docs/CHECKPOINT.md)
