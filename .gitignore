@@ -7,3 +7,6 @@ etc/
 checkbox.io
 .prettierrc
 iTrust2-v8
+*key.pub
+inventory.ini
+digital_ocean.js

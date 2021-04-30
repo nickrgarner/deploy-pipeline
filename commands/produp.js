@@ -115,16 +115,22 @@ async function run(isLocal) {
     }
 
     console.log(chalk.greenBright("Spinning up Monitor VM..."));
-    result = child.spawnSync(`bakerx`, `run monitor focal --ip 192.168.33.24`.split(" "), {
+    result = child.spawnSync(`bakerx`, `run monitor focal --ip 192.168.33.24 --sync`.split(" "), {
       shell: true,
       stdio: "inherit",
     });
+    if (result.error) {
+      printError(result);
+    }
+
+    console.log(chalk.greenBright("Copying config-srv SSH key to Monitor VM..."));
+    result = sshSync(`/bakerx/cm/monitor-key-copy.sh`, "vagrant@192.168.33.24");
     if (result.error) {
       printError(result);
     }
 
     console.log(chalk.greenBright("Spinning up checkbox.io VM..."));
-    result = child.spawnSync(`bakerx`, `run checkbox focal --ip 192.168.33.23`.split(" "), {
+    result = child.spawnSync(`bakerx`, `run checkbox focal --ip 192.168.33.23 --sync`.split(" "), {
       shell: true,
       stdio: "inherit",
     });
@@ -132,11 +138,23 @@ async function run(isLocal) {
       printError(result);
     }
 
+    console.log(chalk.greenBright("Copying config-srv SSH key to checkbox.io VM..."));
+    result = sshSync(`/bakerx/cm/checkbox-key-copy.sh`, "vagrant@192.168.33.23");
+    if (result.error) {
+      printError(result);
+    }
+
     console.log(chalk.greenBright("Spinning up iTrust2 VM..."));
-    result = child.spawnSync(`bakerx`, `run itrust focal --ip 192.168.33.22`.split(" "), {
+    result = child.spawnSync(`bakerx`, `run itrust focal --ip 192.168.33.22 --sync`.split(" "), {
       shell: true,
       stdio: "inherit",
     });
+    if (result.error) {
+      printError(result);
+    }
+
+    console.log(chalk.greenBright("Copying config-srv SSH key to iTrust2 VM..."));
+    result = sshSync(`/bakerx/cm/itrust-key-copy.sh`, "vagrant@192.168.33.22");
     if (result.error) {
       printError(result);
     }
