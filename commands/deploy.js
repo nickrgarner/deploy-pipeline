@@ -28,7 +28,7 @@ exports.handler = async (argv) => {
 async function run(app, inventoryPath) {
   console.log(chalk.greenBright(`Installing dependencies for ${app}...`));
   let result = sshSync(
-    `ansible-playbook ${app}_config -i ${inventoryPath}`,
+    `sudo ansible-playbook --vault-pass "/home/.vault-pass" /bakerx/cm/${app}_config.yml -i /bakerx/${inventoryPath}`,
     "vagrant@192.168.33.20",
   );
   if (result.error) {

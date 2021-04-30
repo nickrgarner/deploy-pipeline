@@ -1,9 +1,28 @@
 ---
 # Setup Jenkins on config-srv: install + pipeline-style plugins
+
 - name: Copy ansible vault-pass to home directory
   template:
     src: /bakerx/.vault-pass
     dest: /home/.vault-pass
+  become: true
+
+- name: Create .bakerx directory
+  file:
+    path: /home/vagrant/.bakerx
+    state: directory
+  become: true
+
+- name: Generate keypair for monitor
+  shell: ssh-keygen -f /home/vagrant/.bakerx/monitor_key -t rsa -b 4096 && sudo cp /home/vagrant/.bakerx/monitor_key.pub /bakerx/monitor_key.pub
+  become: true
+
+- name: Generate keypair for checkbox
+  shell: ssh-keygen -f /home/vagrant/.bakerx/checkbox_key -t rsa -b 4096 && sudo cp /home/vagrant/.bakerx/checkbox_key.pub /bakerx/checkbox_key.pub
+  become: true
+
+- name: Generate keypair for itrust
+  shell: ssh-keygen -f /home/vagrant/.bakerx/itrust_key -t rsa -b 4096 && sudo cp /home/vagrant/.bakerx/itrust_key.pub /bakerx/itrust_key.pub
   become: true
 
 - name: Download Jenkins apt key

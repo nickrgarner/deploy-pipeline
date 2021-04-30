@@ -34,11 +34,11 @@
   become: true
 
 - name: Clone checkbox repo
-  shell: 'cd /bakerx && git clone https://github.com/chrisparnin/checkbox.io.git'
+  shell: "cd /bakerx && git clone https://github.com/chrisparnin/checkbox.io.git"
   become: true
 
 - name: Run npm install
-  shell: 'cd /bakerx/checkbox.io/server-side/site && npm install'
+  shell: "cd /bakerx/checkbox.io/server-side/site && npm install"
   become: true
 
 - name: Install mongodb
@@ -54,7 +54,7 @@
     state: present
   become: true
 
-- name: Install pip3 for Mongo Collection Dependencies     
+- name: Install pip3 for Mongo Collection Dependencies
   apt:
     pkg: python3-pip
     state: latest
@@ -66,7 +66,7 @@
     state: latest
   become: true
 
-  - name: Start mongodb service
+- name: Start mongodb service
   service:
     name: mongodb
     state: started
@@ -124,7 +124,7 @@
   become: true
 
 - name: start checkbox server
-  shell: 'cd /bakerx/checkbox.io/server-side/site && pm2 start server.js'
+  shell: "cd /bakerx/checkbox.io/server-side/site && pm2 start server.js"
   become: true
 
 - name: Restart nginx
