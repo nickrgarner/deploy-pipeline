@@ -1,0 +1,7 @@
+---
+# iTrust 2 dependencies
+
+- name: Apt update
+  apt:
+    update_cache: true
+  become: true
