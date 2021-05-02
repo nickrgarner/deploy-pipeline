@@ -30,7 +30,7 @@ async function run(base, compare) {
   console.log(chalk.greenBright("Spinning up Canary VM..."));
   result = child.spawnSync(
     `bakerx`,
-    `run canary focal --ip 192.168.33.29 --sync`.split(" "),
+    `run canary queues --ip 192.168.33.29 --sync`.split(" "),
     {
       shell: true,
       stdio: "inherit",
