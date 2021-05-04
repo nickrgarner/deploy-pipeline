@@ -87,14 +87,14 @@ async function addToInventory(itrustIP, checkboxIP) {
   return new Promise(async function (resolve, reject) {
     fs.writeFile(
       "inventory.ini",
-      `[itrust]\n${itrustIP} ansible_user=vagrant\n\n[checkbox]\n${checkboxIP} ansible_user=vagrant\n`,
+      `[itrust]\n${itrustIP} ansible_user=root\n\n[checkbox]\n${checkboxIP} ansible_user=root\n`,
       (err) => {
         if (err) {
           reject(printError(err));
         } else {
           resolve(
             console.log(
-              chalk.greenBright(`iTrust2 and checkbox.io deployments added to Ansible hosts`),
+              chalk.greenBright(`iTrust2 and checkbox.io deployments added to Ansible inventory`),
             ),
           );
         }

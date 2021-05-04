@@ -33,18 +33,30 @@
     state: present
   become: true
 
+- name: Create /var/www directory
+  file:
+    path: /var/www
+    state: directory
+  become: true
+
 - name: Clone checkbox repo
-  shell: "cd /bakerx && git clone https://github.com/chrisparnin/checkbox.io.git"
+  shell: "cd /var/www && git clone https://github.com/chrisparnin/checkbox.io.git"
   become: true
 
 - name: Run npm install
-  shell: "cd /bakerx/checkbox.io/server-side/site && npm install"
+  shell: "cd /var/www/checkbox.io/server-side/site && npm ci"
   become: true
 
 - name: Install mongodb
   apt:
     pkg: mongodb
     state: latest
+  become: true
+
+- name: Install firewalld
+  apt:
+    name: firewalld
+    state: present
   become: true
 
 - name: Install pm2 to run checkbox server
@@ -85,9 +97,9 @@
   no_log: true
   mongodb_user:
     database: admin
-    name: #"{{mongo.MONGO_USER}}"
-    password: #"{{mongo.MONGO_PASSWORD}}"
-    login_port: #"{{mongo.MONGO_PORT}}"
+    name: "{{mongo.MONGO_USER}}"
+    password: "{{mongo.MONGO_PASSWORD}}"
+    login_port: "{{mongo.MONGO_PORT}}"
     roles: readWrite
     state: present
   become: true
@@ -98,33 +110,27 @@
     state: latest
   become: true
 
-- name: Start nginx
-  service:
-    name: nginx
-    state: started
+- name: Copy nginx config file
+  template:
+    src: ../templates/checkbox.io.j2
+    dest: /etc/nginx/sites-available/checkbox.io
   become: true
 
-- name: Copy nginx config file and restart nginx
-  copy:
-    src: /bakerx/templates/static_site.cfg
-    dest: /etc/nginx/sites-available/static_site.cfg
+- name: Delete default sites-enabled
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
   become: true
 
 - name: Create symlink
   file:
-    src: /etc/nginx/sites-available/static_site.cfg
-    dest: /etc/nginx/sites-enabled/default
+    src: /etc/nginx/sites-available/checkbox.io
+    dest: /etc/nginx/sites-enabled/checkbox.io
     state: link
   become: true
 
-- name: Copy checkbox contents
-  copy:
-    src: /bakerx/checkbox.io/server-side/site
-    dest: /home/vagrant/static-site
-  become: true
-
-- name: start checkbox server
-  shell: "cd /bakerx/checkbox.io/server-side/site && pm2 start server.js"
+- name: Start checkbox server
+  shell: "cd /var/www/checkbox.io/server-side/site && pm2 start server.js"
   become: true
 
 - name: Restart nginx
