@@ -129,6 +129,15 @@
     state: link
   become: true
 
+- name: Open Port 3002 for checkbox.io
+  firewalld:
+    zone: public
+    port: 3002/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  become: true
+
 - name: Start checkbox server
   shell: "cd /var/www/checkbox.io/server-side/site && pm2 start server.js"
   become: true
