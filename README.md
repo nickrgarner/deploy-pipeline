@@ -66,6 +66,11 @@ pipeline deploy iTrust -i inventory.ini
 ```
 **NOTE:** Deploying iTrust2 requires FIRST running a Jenkins build of the project to generate a snapshot WAR file.
 
+## Lessons Learned
+* One of the difficulties of canary analysis is determining which health metrics are important to the project being tested. For example, HTTP codes are arguably most useful for web applications and REST APIs.
+* Getting SSH key pairs proliferated to the various deploy targets can be challenging depending on initial security setups, but help ensure smooth interactions with the configuration server once established.
+* Tomcat and nginx configuration are quite complicated and application-dependent, requiring a lot of trial, error, and debugging to successfully implement.
+* Arguably the most useful role of canary analysis is in support of gradual rollout of new releases, versus as a testing tool. Traffic can be incrementally diverted to new versions of the code without impacting the entire userbase at once.
 
 ## Past Milestones
 ### [Build README](M1%20Docs/README.md)
