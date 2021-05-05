@@ -1,7 +1,101 @@
 ---
-# iTrust 2 dependencies
+# iTrust2 dependencies
 
 - name: Apt update
   apt:
     update_cache: true
   become: true
+
+- name: Install firewalld
+  apt:
+    name: firewalld
+    state: present
+  become: true
+
+- name: Install Java 11
+  yum:
+    name: "{{java.VERSION}}"
+    state: present
+  become: true
+
+- name: Change default Java version
+  alternatives:
+    name: java
+    link: /bin/java
+    path: "{{java.ALTERNATIVES}}"
+
+- name: Install maven
+  apt:
+    pkg: maven
+    state: latest
+  become: true
+
+- name: Install MySQL server
+  apt:
+    pkg: mysql-server
+    state: latest
+  become: true
+
+- name: Install MySQL client
+  apt:
+    pkg: mysql-client
+    state: latest
+  become: true
+
+- name: Install PyMySQL
+  apt:
+    name: python3-pymysql
+    state: latest
+  become: true
+
+- name: Stop mysql
+  service:
+    name: mysql
+    state: stopped
+  become: true
+
+- name: Set root password
+  template:
+    src: ../templates/root.cnf.j2
+    dest: /root/.my.cnf
+    mode: 0600
+  become: true
+
+- name: Open Port 3306 for MySQL
+  firewalld:
+    zone: public
+    port: 3306/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  become: true
+
+- name: Start MySQL service
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+  become: true
+
+- name: Set MySQL root user
+  mysql_user:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_host: localhost
+    login_port: 3306
+    login_user: root
+    login_password: ""
+    name: root
+    password: "{{mysql.MYSQL_PASS}}"
+    state: present
+  become: true
+
+- name: Open root password
+  shell: mysql -u root -e 'UPDATE mysql.user SET plugin="mysql_native_password" WHERE user="root" AND host="localhost"'
+  become: true
+
+- name: Flush privileges
+  shell: mysql -u root -e 'FLUSH PRIVILEGES'
+  become: true
+
+- name: Install tomcat
+# Joe is doing this part
