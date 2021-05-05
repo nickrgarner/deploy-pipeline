@@ -1,9 +1,4 @@
-const child = require("child_process");
 const chalk = require("chalk");
-const path = require("path");
-const os = require("os");
-const scpSync = require("../lib/scp");
-const sshSync = require("../lib/ssh");
 
 let jenkins;
 
@@ -39,7 +34,7 @@ exports.handler = async (argv) => {
 };
 
 async function getBuildStatus(job, id) {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function (resolve) {
     const result = await jenkins.build.get(job, id);
     resolve(result);
   });

@@ -1,8 +1,4 @@
-const child = require("child_process");
 const chalk = require("chalk");
-const path = require("path");
-const os = require("os");
-const scpSync = require("../lib/scp");
 const sshSync = require("../lib/ssh");
 
 exports.command = "deploy [app]";

@@ -1,9 +1,6 @@
 const child = require("child_process");
 const chalk = require("chalk");
-const path = require("path");
-const os = require("os");
 
-const scpSync = require("../lib/scp");
 const sshSync = require("../lib/ssh");
 
 exports.command = "setup";
@@ -34,7 +31,7 @@ exports.handler = async (argv) => {
   })();
 };
 
-async function run({ privateKey, ghUser, ghPass }) {
+async function run({ ghUser, ghPass }) {
   console.log(chalk.greenBright("Installing config-srv server!"));
 
   console.log(chalk.blueBright("Downloading focal image..."));
