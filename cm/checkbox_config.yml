@@ -1,5 +1,0 @@
-# Set up checkbox.io dependencies on cloud instance
-
-- hosts: checkbox
-  roles:
-    - checkbox_config
