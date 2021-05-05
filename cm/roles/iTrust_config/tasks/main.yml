@@ -96,6 +96,5 @@
 - name: Flush privileges
   shell: mysql -u root -e 'FLUSH PRIVILEGES'
   become: true
-
-- name: Install tomcat
+#- name: Install tomcat
 # Joe is doing this part
