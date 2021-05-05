@@ -1,0 +1,5 @@
+# Set up iTrust dependencies on cloud instance
+
+- hosts: itrust
+  roles:
+    - iTrust_config

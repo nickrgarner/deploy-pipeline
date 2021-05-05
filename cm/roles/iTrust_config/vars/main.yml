@@ -1,0 +1,6 @@
+java:
+  VERSION: openjdk-11-jdk-headless
+  ALTERNATIVES: "/usr/lib/jvm/java-11-openjdk-amd64/bin/java"
+
+mysql:
+  MYSQL_PASS: "12345"
