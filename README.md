@@ -4,6 +4,9 @@
 
 ## [Milestone 3 Checkpoint](CHECKPOINT.md)
 
+## [Screencast Part 1](https://youtu.be/0VAVmI86ZRQ)
+## [Screencast Part 2](https://youtu.be/yyDk95c6x-4)
+
 ## Usage
 
 ### Setup
