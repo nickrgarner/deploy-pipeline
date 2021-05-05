@@ -168,7 +168,7 @@ function generateTestReport({base, compare}) {
   }).length / compare.length * 100;
 
   console.log(chalk.greenBright(`Success rate for base branch: ${baseSuccessRate.toFixed(2)}% of requests over 60 seconds succeeded`));
-  console.log(chalk.greenBright(`Success rate for base branch: ${compareSuccessRate.toFixed(2)}% of requests over 60 seconds succeeded`));
+  console.log(chalk.greenBright(`Success rate for compare branch: ${compareSuccessRate.toFixed(2)}% of requests over 60 seconds succeeded`));
 
   if (baseSuccessRate - compareSuccessRate > 10) {
     console.log(chalk.redBright('Canary Failed'));
