@@ -1,9 +1,11 @@
 const child = require("child_process");
 const chalk = require("chalk");
 const path = require("path");
+const axios = require('axios');
 const sshSync = require("../lib/ssh");
 const fs = require("fs");
 const VBox = require('../lib/VBoxManage');
+const sampleEventBody = require('../sample-canary-event.json');
 
 exports.command = "canary [base] [compare]";
 exports.desc = "Generate canary score and report";
@@ -38,17 +40,12 @@ async function run(base, compare) {
   }
   let ip = getIPAddress();
   console.log(chalk.greenBright(`Setting host network as ${ip}...`));
-  fs.writeFileSync(path.join(__dirname, "../lib/dashboard/metrics/ip.txt"), ip);
+  fs.writeFileSync(path.join(__dirname, "../lib/ip.txt"), ip);
 
   result = sshSync(`/bakerx/cm/canary-load-balancer.sh`, "vagrant@192.168.33.29");
   if (result.error) {
     printError(result);
   }
-
-  // result = sshSync(`/bakerx/cm/canary-monitoring-dashboard.sh`, "vagrant@192.168.33.29");
-  // if (result.error) {
-  //   printError(result);
-  // }
 
   console.log(chalk.greenBright("Spinning up Base VM..."));
   result = child.spawnSync(
@@ -69,11 +66,6 @@ async function run(base, compare) {
     printError(result);
   }
 
-  // result = sshSync(`/bakerx/cm/canary-monitoring-agent.sh -b ${base}`, "vagrant@192.168.33.28");
-  // if (result.error) {
-  //   printError(result);
-  // }
-
   console.log(chalk.greenBright("Spinning up Compare VM..."));
   result = child.spawnSync(
     `bakerx`,
@@ -93,10 +85,8 @@ async function run(base, compare) {
     printError(result);
   }
 
-  // result = sshSync(`/bakerx/cm/canary-monitoring-agent.sh -b ${compare}`, "vagrant@192.168.33.27");
-  // if (result.error) {
-  //   printError(result);
-  // }
+  const testResults = await generateTestTraffic();
+  generateTestReport(testResults);
 }
 
 function printError(result) {
@@ -117,5 +107,73 @@ function getIPAddress() {
   }
 
   return '0.0.0.0';
+}
+
+async function generateTestTraffic() {
+  // Generate traffic to base instance
+  const baseResults = [];
+  let interval;
+  console.log(chalk.greenBright('Executing canary analysis of base branch...'));
+  await new Promise((resolve) => {
+    const time = new Date();
+    interval = setInterval(async () => {
+      if ((new Date() - time) >= 60000) {
+        resolve();
+      } else {
+        try {
+          const result = await axios.post('http://192.168.33.29:3030/preview', sampleEventBody);
+          baseResults.push(result);
+        } catch {
+          baseResults.push({status: 500})
+        }
+      }
+    }, 1000);
+  });
+  clearInterval(interval);
+
+  // Generate traffic to compare instance
+  const compareResults = [];
+  console.log(chalk.greenBright('Executing canary analysis of compare branch...'));
+  await new Promise((resolve) => {
+    const time = new Date();
+    interval = setInterval(async () => {
+      if ((new Date() - time) >= 60000) {
+        resolve();
+      } else {
+        try {
+          const result = await axios.post('http://192.168.33.29:3030/preview', sampleEventBody, { headers: { 'canary-instance': 'compare' } });
+          compareResults.push(result);
+        } catch {
+          compareResults.push({status: 500})
+        }
+      }
+    }, 1000);
+  });
+  clearInterval(interval);
+
+  // Return results
+  return {
+    base: baseResults,
+    compare: compareResults
+  }
+}
+
+function generateTestReport({base, compare}) {
+  const baseSuccessRate = base.filter(response => {
+    return response.status === 200;
+  }).length / base.length * 100;
+
+  const compareSuccessRate = compare.filter(response => {
+    return response.status === 200;
+  }).length / compare.length * 100;
+
+  console.log(chalk.greenBright(`Success rate for base branch: ${baseSuccessRate.toFixed(2)}% of requests over 60 seconds succeeded`));
+  console.log(chalk.greenBright(`Success rate for base branch: ${compareSuccessRate.toFixed(2)}% of requests over 60 seconds succeeded`));
+
+  if (baseSuccessRate - compareSuccessRate > 10) {
+    console.log(chalk.redBright('Canary Failed'));
+  } else {
+    console.log(chalk.greenBright('Canary Passed!'))
+  }
 }
 

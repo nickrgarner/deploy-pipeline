@@ -8,6 +8,7 @@
   "author": "YOU",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "chalk": "^4.1.0",
     "got": "^11.8.2",
     "jenkins": "^0.28.1",
