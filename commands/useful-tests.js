@@ -1,11 +1,6 @@
-const child = require("child_process");
 const chalk = require("chalk");
-const path = require("path");
-const os = require("os");
 
-const scpSync = require("../lib/scp");
 const sshSync = require("../lib/ssh");
-const fs = require("fs");
 
 exports.command = "useful-tests";
 exports.desc = "Run mutation fuzzer on iTrust test suite";

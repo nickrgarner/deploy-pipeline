@@ -1,10 +1,7 @@
 const child = require("child_process");
 const chalk = require("chalk");
 const path = require("path");
-const os = require("os");
-const scpSync = require("../lib/scp");
 const sshSync = require("../lib/ssh");
-const got = require("got");
 const fs = require("fs");
 const VBox = require('../lib/VBoxManage');
 
@@ -48,10 +45,10 @@ async function run(base, compare) {
     printError(result);
   }
 
-  result = sshSync(`/bakerx/cm/canary-monitoring-dashboard.sh`, "vagrant@192.168.33.29");
-  if (result.error) {
-    printError(result);
-  }
+  // result = sshSync(`/bakerx/cm/canary-monitoring-dashboard.sh`, "vagrant@192.168.33.29");
+  // if (result.error) {
+  //   printError(result);
+  // }
 
   console.log(chalk.greenBright("Spinning up Base VM..."));
   result = child.spawnSync(
@@ -72,10 +69,10 @@ async function run(base, compare) {
     printError(result);
   }
 
-  result = sshSync(`/bakerx/cm/canary-monitoring-agent.sh -b ${base}`, "vagrant@192.168.33.28");
-  if (result.error) {
-    printError(result);
-  }
+  // result = sshSync(`/bakerx/cm/canary-monitoring-agent.sh -b ${base}`, "vagrant@192.168.33.28");
+  // if (result.error) {
+  //   printError(result);
+  // }
 
   console.log(chalk.greenBright("Spinning up Compare VM..."));
   result = child.spawnSync(
@@ -96,10 +93,10 @@ async function run(base, compare) {
     printError(result);
   }
 
-  result = sshSync(`/bakerx/cm/canary-monitoring-agent.sh -b ${compare}`, "vagrant@192.168.33.27");
-  if (result.error) {
-    printError(result);
-  }
+  // result = sshSync(`/bakerx/cm/canary-monitoring-agent.sh -b ${compare}`, "vagrant@192.168.33.27");
+  // if (result.error) {
+  //   printError(result);
+  // }
 }
 
 function printError(result) {
