@@ -87,14 +87,14 @@ async function addToInventory(itrustIP, checkboxIP) {
   return new Promise(async function (resolve, reject) {
     fs.writeFile(
       "inventory.ini",
-      `[itrust]\n${itrustIP} ansible_user=vagrant\n\n[checkbox]\n${checkboxIP} ansible_user=vagrant\n`,
+      `[itrust]\n${itrustIP} ansible_ssh_private_key_file=/home/vagrant/.bakerx/itrust_key ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_user=root\n\n[checkbox]\n${checkboxIP} ansible_ssh_private_key_file=/home/vagrant/.bakerx/checkbox_key ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_user=root\n`,
       (err) => {
         if (err) {
           reject(printError(err));
         } else {
           resolve(
             console.log(
-              chalk.greenBright(`iTrust2 and checkbox.io deployments added to Ansible hosts`),
+              chalk.greenBright(`iTrust2 and checkbox.io deployments added to Ansible inventory`),
             ),
           );
         }
@@ -173,6 +173,23 @@ async function run(isLocal) {
 
     let checkboxIP = await getDropletIP(checkboxDroplet);
     await addToInventory(itrustIP, checkboxIP);
+
+    // console.log(chalk.greenBright("Copying ssh keys to Digital Ocean instances..."));
+    // result = sshSync(
+    //   `ssh-copy-id -i /bakerx/itrust_key.pub root@${itrustIP}`,
+    //   "vagrant@192.168.33.20",
+    // );
+    // if (result.error) {
+    //   printError(result);
+    // }
+
+    // result = sshSync(
+    //   `ssh-copy-id -i /bakerx/checkbox_key.pub root@${checkboxIP}`,
+    //   "vagrant@192.168.33.20",
+    // );
+    // if (result.error) {
+    //   printError(result);
+    // }
   }
 }
 
