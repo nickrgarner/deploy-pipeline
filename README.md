@@ -45,12 +45,23 @@ pipeline useful-tests -c <repetitions> --gh-user <NCSU Github User> --gh-pass <N
 
 ### Provision production instances:
 ```sh
-# Provision on Digital Ocean
+# Provision on Digital Ocean - requires API token in `commands/produp.js`
 pipeline prod up
 
 # Provision locally with VirtualBox
 pipeline prod up --local
 ```
+**NOTE:** The proper inventory file will be generated at runtime by running one of these commands.
+
+### Deploy applications:
+```sh
+# Install checkbox.io dependencies and serve with nginx
+pipeline deploy checkbox -i inventory.ini
+
+# Install iTrust2-v8 dependencies and serve with Tomcat9
+pipeline deploy iTrust -i inventory.ini
+```
+**NOTE:** Deploying iTrust2 requires FIRST running a Jenkins build of the project to generate a snapshot WAR file.
 
 
 ## Past Milestones
